@@ -1,0 +1,991 @@
+techniques de programmation fonctionnelle excluant la partie du contrôle de l'evaluation sera vue apres:
+1->prog. typée via transpilation de code.
+2->prog. dirigée par les fonctions:
+ 1)event-driven
+ 2)data-driven
+TJRS EN STYLE fonctionnel.
+td8=>typage en typescript.
+pour le data-driven qui est en evolution vaudra un nouveau paradigme nommé programmation dirigée par les données est un autre topic tt comme event-driven qui traite la prog. evenementielle qui conduit a la prog. script comme utilisation au service des demandes de la PROG. web mediée par les scripts JS en document html.
+ =>2 types de prog. dont l'un(le2ieme) induit en premier script et en deuxieme la prog. web et evenementielle.
+ici que LA programmation typée par transpilation.
+*******************************
+typescript sur-language d'Ecmascript en adresse securisée https://www.typescriptlang.org permettant d'ajouter des annotations de type aux expressions du language(parler FONCTIONNELLEMENT).
+ ./node_modules/.bin/tsc <file.TS> --strict 
+apres npm install typescript 
+ =>saving the compilateur TSC en hidden sous-repertoire .bin.
+&& strict force emission max erreurs car tolerance nn () dans la plupart d'exemples situations hasardeuses.
+***********************************************
+EXO1:>>
+1->la fonction myPolynome possede le type suivant:
+ (number)=>number
+implementation de deux methodes flechée ou nn:>>
+1->function mP(x:number):number{..;}
+2->const mP2:(number)=>number=(x:number)=>..;
+QST2:
+typer dA et dA_n:>>
+dA est de type ((number)=>number,number)=>((number)=>number)
+dA_n meme chose seulement en entree ajout number:>>
+ ((number)=>number,number,number)=>((number)=>number)
+pour eviter l'encombrement en terme type de f on considere un new type of all functions tooking number and returning number by:
+type fun=(number)=>number
+=>dA: (fun,number)=>fun;///
+et pour dA_n eviter l'encombrement revient a utiliser fun mais aussi un type == number qui est TYPE number2=number pour ne pas faire number,number qui donne des erreurs sauf si on met en curryfication mode implementation mais là on l'evite vu l'objet de la prochaine question.
+=>dA_n: (fun,number,number2)=>fun;//
+tjrs en 2 methodes lune via function(f:(number)=>number,h:number,n:number)):(number)=>number{..}
+permis car differenciation depuis les noms de variables STATIQUES.
+dA_n__v2
+ou bien en flechage fonctionnelle de creation donnée fonction.
+(typage astuce donnée en plus-haut)
+=>tests par dcos et dsin en 0
+let dcos:(number)=>number=dA_t(Math.cos,0.0001)
+et de meme pour dsin avec Math.sin 
+puis tests en valeurs 0 pour les 2 qui valent respectivement 0 et ~1.
+qst2 faite sur le typage des fonctions derivées (2 methodes)+typage valeurs de tests dcos et dsin.(typage en declaration via :(number)=>number puis valeur exemple pour dcos dA_t(Math.cos,0.0001) ou dAt__v2(Math.cos,0.0001).
+*>>QST3:>>>
+resume de la question1:
+typage (number)=>number ou (x:number):number
+resume de la question2:
+->en flechage (fun,number,number2)=>fun
+->en function(){}; (f:(number)=>number,h:number,n:number):(number)=>number
+pour dA et dA_ordre__n
+puis typer dcos et dsin avant affectation via:
+exemple de dsin
+let dsin:(number)=>number=dA_ordre__n(Math.sin,0.0001,1)
+debut qst3::
+typer la valeur dC<=>>en flechage mieux.
+d=(f,h)=>dA(f,h);
+=>format voulu::
+     dC=(f)=>(h)=>dA(f,h);
+le resultat est f' si on veut f'(x) direct depuis dC on fait:
+dC=(f)=>(h)=>(x)=>((f(x+h)-f(x-h))/(2*h);
+mais ce modele fait penser a ce que dA dans la version n'est plus generale en terme du parametre nouveau x mais l'y ajouter fournit un maximum de curryfication au profit des specialisations en recuperant dA(f,h) depuis la nouvelle dC.
+=>en typage:>>>
+(x)=>f(x) type (number)=>number
+~a dire que (f)=>(h)=>rlst <=> (number)=>((number)=>((number)=>number)
+car rslt en mode1 est une fonction retournée selon dA et dA_n(types compris)
+=>necessite d'eviter l'encombrement:>>
+type func=(number)=>number;
+//2ieme level le retour qui sera une fonction
+//func associe (h)=>.. se voit (func)=>type de (h)=>..
+//qui est (number)=>..(() le comprend TSC)
+//=>le type sera pour dC (func)=>(number)=>func
+//en mode direct de transposition ca parait mieux~MOYEN mnemotechnique.
+type curry=(func)=>(number)=>func;
+puis implementation de dc_t :flechage cf. remarque au-dessus
+const dc_T:curry=(f)=>(h)=>dA_T(f,h);
+en mode 2 le type sera:
+ (func)=>(number)=>(number)=>number
+=>les tests pour dcos2 et dsin2:::
+const dcos2=t_2(Math.cos)(h=0.0001);
+puis le test via:>> console.log(dcos2(0)===0);
+et de meme pour dsin2(0)===1.
+(dsin2(mode1(1/2 pour chaque mode car ressemblance)) :
+  const dsin2=t_v0(Math.sin)(0.0001);
+//anti-specialisation en vue remarques d'application de t_v0/t_2.
+fin qst3.
+resume exo1:
+qst1:=>facile.
+qst2:=>facile avec reprise des 2 fonctions en typage now + valeurs dcos1 et dsin1 de tests aussi typées en declaration(detection erreurs).// ///
+qst3:=>facile avec double + astuce --TYPAGE et aussi pour valeurs tests dcos2,dsin2.
+rien n'a ete copie seuls la methode <T> a ete emergée soudainement et les interfaces pour ~nouveaux types fonctions & classes mais pas utilisation ici
++specialisation depuis la forme curryfiée a faire(!!!) && dcos,dsin signification+++la forme curryfiée en +++ car generalisation mais en +++ ca se specialise selon nos usages mais elle reste presque bonne.
+=>nouveau 3ieme type
+si (f)=>(h)=>da(f,h)
+specialisation en cos
+dC(Math.cos)=>donne fonction qui prend h et retourne la derivée du cos avec erreur h.
+->specialisation en 0.001
+=>TJRS nouvelle fonction
+(f)=>dC(f)(0.001) qui donne en fonction de f la derivée f' erreur h===0.001.
+new function specilization on f===cos:
+(h)=>dC(cos)(h) qui retourne la fonction f' erreur h argument entree
+=>facile si possiblite renverse elle-meme+++++.//
+parlons du 3ieme type
+1->number
+2->(number)=>number
+ceux rencontres dans qst1 et qst2
+pour la question 3 la fonction en curryfied format permet de ne pas prendre f,h tout a LA FOIS mais peut juste prendre f et renvoyer la fonction dA_t specialisee en f ou prendre h et renvoyer la fonction dA_t specialisee en h://mode 1(mode2 ressemblance frappante)
+type curry:(func)=>(number)=>func
+comme type de fonctions (types<=>operandes & retours)
+=>l'operande nous interesse pas le retour ..
+au lieu d'avoir (number)=>number
+en special_h (f)=>curry(f)(h) 
+donc le retour sera de type (number)=>func
+=>cest ca le nouveau type cest le type de renvoie d'une fonction en premier le type de dA_t dAn_T est de (number)=>number mais là on se retrouve avec renvoie d'une fonction si specilisation en f d'operande h parametre sinon en generalisation le type de la fonction dA_t est (number,func)=>func et en 3/mode1 (number)=>(func)=>func donc le type (number,func)=>func nous est usuelle car type de fonction ecriture ordinaire mais le type curry (number)=>(func)=>func nous est pas ordinaire car normalement tt fonction est de type (types arguments split ' ' &joiN)=>type retour mais là on a un double => cest comme si le type de retour en curry est (func)=>func et ce qui est logiquement le cas mais non car c'est une fonction curryfiée => nouveau type :
+rencontre du 3ieme type qui est types des fonctions curryfiées:
+ (type args[0])=>..=>(type args[args.length-1])=>type retour de la fonction en modele nn curryfiée.voilà.
+A RETENIR.
+EXO2:>>
+fonctions sur les paires pointées:
+const nil={}; apart
+puis cons(_car,_cdr)
+puis car(cons) et cdr(cons)
+fonctions sur les listes:
+head(list);tail(list) et listIsEmpty
+rq: on aurait pu creer un type fonction depuis un interface pour le modele curry
+interface tp{
+(func):tp2;}
+avec type tp2 = (number)=>func &&& func=(number)=>number
+puis const dct:tp=(f)=>(h)=>dA_t(f,h) qui est ((x)=>dA_t(f,h)(x))
+ou bien const dct:tp=(f)=>(h)=>(x)=>dA_t(f,h)(x)
+ca se comprend bien sans probleme de types meme avec melange declarations et affectations types imposés => verification pas de probleme au niveau de la compilation.
+retour exo2:>>
+la paire pointee est : {car: _car, cdr: _cdr} avec _car,_cdr en arguments et le type de _car,_cdr est respectivement number,object normalement mais on a vu que dans les matrices td7 le car est de type object et cdr de type object(liste ICI) donc les types sont covariants selon la structure=>genericite du type de car,cdr comme modele de stockage liste avec cdr un peu speciale..
+=>construction du type d'objet pp (pointed pair) en genericite.
+rappel: une fonction generalisee comme par exemple countMatches prend un str ou un array en argument principale
+=>generalisation en typescript par genericite du type d'entree via l'entete <T> avec arrayLike<T> comme type d'entree si retour la valeur de plus grande occurence avec T string ou number=>typeof($1²²²)===number[]orstring.((char type existe pas.//))
+si on veut declarer le type pp : type pp = (comme type number=number ou type func=(number)=>number() ou type array=number[]) ecriture normale sans les noms pour func..=>rappel type d'objet:>>>>>
+{age:number, name: string} exemple tjrs les clefs sont connues pour savoir le type d'un dictio car le dictio son but on le sait donc directement(comme specilisation fonctions number valeur) directement dans le format key: typeof(key)
+type pp = {car: number, cdr: object}
+en genericite:
+=>fcts. function f<T>(coll: arrayLike<T>):T 
+donc en type : type de ces fonction est type func_T<T>=|suppression<T>|(arrayLike<T>)=>T en-tete T tjrs
+cad. le type des fonctions avec un argument variant est le type:
+ type<T>=..
+=>pour les objets pareils:::
+type pp<T,U>={car : T, cdr: U};
+cest comme si le type est fonction de T,U.
+pour la separation ; est prefere avec ; a la fin du dernier type de valeur clef connue aussi si on veut.
+resume des types nouveaux~:
+curried: via interface tp2 ou type curry=(number)=>(func)=>func;
+objets generiques:
+ rappel type objet {key_connu: type1_ofvaluekey1;..};
+=>en genericite le type est une fonction des variables de types:
+EX.:>>>>>>> type pp<T,U>={car: T; cdr: U;};
+=>implementation de la fonction typée cons:
+ =>_car et _cdr sont de types respectivement T et U avec le retour une paire pointee donc type retour fonctionnel pp<T,U>=>prototype de cons 1ere fonction des paires pointees:
+function cons<T,U>(_car:T, _cdr:U):pp<T,U>
+voilà.//
+qst1: ajout indicateurs de types pour car et cdr:2dernieres fonctions sur les paires pointees.
+prototype vue que ces fonctions prennent un parametre qui est de type pp donc obligee en-tete fonctionnelle <T,U>::>>>>
+1->celui de car: car<T,U>(pl:pp<T,U>):T
+2->celui de cdr: cdr<T,U>(pl:pp<T,U>):U
+car retourne pl.car et cdr :pl.cdr.//
+=>typage reussi de car,cdr.
+tests:
+let pp1:pp<number,object>=cons<number,object>(10,{});
+voilà.
+QST2:>>
+now le type liste difficile car recursivite de la liste 
+=>premierement le type est undefined si existe pas car et cdr (===nil) le type d'une valeur vide est undefined car on a pas la valeur pour trancher debut au moins sur le TYPEEE ou bien le type d'un objet {car:??,cdr:??} le type de car sera T et celui de cdr le meme type qu'une liste (car meme type que dans cons && difference cest que la paire pointee contient 2 choses mais la specialisation de ces 2 dernieres permet la definition d'une liste cest ca la difference en imposant que le premier est libre typeof T (cf. matrices) mais le deuxieme est une liste (liste chainée) donc de meme type tjrs depuis debut dependance vis-a-vis de T
+=>type List<T>={car: T, cdr: List<T>} ;
+avec inclusion de undefined si liste vide soit===nil=={} car pas List<T> vu que cela implique existence champ de type T donc undefined.
+=>ine teste si la liste n'est pas vide et is teste si la liste est vide
+rq: le type liste vue que T est impose===typeof(li.car) le type de la liste sera List<T>===typeof(li.cdr) mais pour {} si on veut inclure ce type dans le modele type List<T>=.. il faut faire object | {car:T, cdr:List<T>} ce qui est farfeLUEE car le type de List<T> value est aussi object=>utilisation de undefined.
+rq2: la fonction ine<T>(l:List<T>) rq avant cdr<T,U> prend pl:pp<T,U> on peut directement l'evaluer en pl donnée sans l'en-tete <T,U> car l'entree donne automatiquement t,u et sans oublier<// que t,u precisent seulement que l'argument a un type dynamique en statique donc connaissance du type de l'argument en complet leve l'obligation d'evaluation en en-tete AUSSI. retour A NOTRE REMARQUE :>>>>>>>>>
+la fonction ine<T> prend une liste de type List<T> en entree qui peut etre undefined => en tt cas <T> au debut le retour va etre booleen. ca teste si la liste est vide soit li===undefined. si on met une fonction qui en premier teste si la liste li est vide et dans ce cas manipule li li est de type undefined et sa valeur aussi undefined avec v1 ine li se manipule en tant que liste de type List<T> et nn pas le type undefined de valeur undefined<=>liste vide ici donc il faut tester pas si li en terme de valeur est undefined mais si li son type est undefined pour cela il faut ajouter la precision que la fonction teste : li is pp<T,List<T>> qui equivaut a dire que li est le type pp<T,U> avec U=List<T> et typeof(li)===List<T> => ca peut etre juste ou non => predicat non pas sur li mais sur typeof(li) qui est de type booleen.
+=>en resume: ine_v0 teste si la valeur est undefined alors qu'il doit tester si le type List<T>===undefined === typeof(li:List<T>:$1===undefined | pp<T,List<T>>) pour cela il faut dire que par exemple pour ine(li) : li is pp<T,List<T>> car li!==undefined implique li est un type donc preciser apres via : li is pp<T,List<T>> pour dire que le li en entree est le type si on veut travailler dessus (cad. sur le type) pp<T,List<T>>..
+rq: firefox se ferme avec des problemes de relancement => kill firefox jobs avec jobs[] apply firefox & comme numero de commande+.//
+revenons a ine:>>
+=>la version v0 est aussi juste car si li est de type undefined donc li vaudra undefined ..()///
+IDEE et terme de resolution:>>
+si dans ine(l) on teste si l!==undefined if faut savoir le type de l d'abord si on veut etre rigoureux car cest List<T> mais il y en a 2 possibilites en | DEDANS. 
+->si l n'est pas vide donc est de type {car: T; cdr: List<T>;} donc l n'est pas vide ssi typeof(l)===pp<T,List<T>> si en entree une liste non vide comparaison avec undefined pas de probleme car en valeur (voir type de l et sa conclusIONN) et si en entree une liste qu'on connait pas de type undefined la comparaison de l avec undefined qui classique valeur peut induire en erreur car cest l son type qui est undefined pas la liste alors que la liste est vide! donc avec le predicat l is pp<T,List<T>> on connait le type de l car l ne secrit pas avec des champs car et cdr => typeof(l)===undefined donc l!==undefined passe par la confirmation du type qui est undefined donc en terme de predicat result ca donne l is undefined car nn pp donc devient le test l!==undefined faux le retour est juste<=>la liste est vide.
+=>pour resoudre tout cela on precise que la valeur de retour va etre un predicat sur les types..
+rq: let t:boolean=undefined est juste le contraire non car aucune valeur de type undefined est connu en --lecture<-->.
+=>ine(l) === l is pp<T,List<T>>==={car: T, cdr: List<T>} donc le predicat l is pp<T,List<T>> signifie est-ce-que l est une paire pointée comme n is number<=>n est-il un nombre l is pp<T,List<T>> signifie est-ce-que l est une paire pointée<T,U=List<T>>.
+=>ine(l) revient a tester si l est une paire pointee car sinon vide
+=>ine(l)~l is pp<T,List<T>>
+puis test dedans0 si l!==undefined veut dire que depuis l is pp<T,List<T>> on a connu que l est soit une paire pointee List<T>[1] soit une liste vide soit ICIII le type valeur undefined donc le test avec l'undefined permet de comparer les types et nn pas les valeurs car si le type est undefined la liste est vide car sinon la liste peut etre undefined en valeur(comme let t:boolean=undefined) mais son type nn et là l!==undefined va retourner true alors que la liste est pas vide..///
+let ll:object=undefined;
+RESUME CONSCIS:
+on a union de deux types dans List<T> en 1 pp<T,List<T>> donc il faut tt au debut si on veut comparaison dire si cest le premier undefined ou ledeuxieme List<T>."1" pour cela on utilise un retour special appele retour boolean sous forme d'un retour predicat sur les types les fonctions a retour booleenne peuvent avoir comme type de retour un predicat sur les types comme ca le predicat lu donne le type de l l is pp<T,List<T>> donne le type de l donc si l===undefined ca peut pas etre une paire pointee U=List<T> car son type!==undefined donc nulle(liste vide)=>ine(l)=true.
+RESUME:
+pour choisir le type avant manipulation eviter errors on passe par un retour predicat sur les types au lieu d'un retour booleen ca permet de connaitre le type pour faire des manipulations adequates generalisees ici.
+=>ine(l) retourne le type predicat sur les types l is pp<T,List<T>> qui signifie que l est soit .1 soit .2 ainsi l'evaluation test l!==undefined si l est une paire retournera faux car une paire nest pas de valeur undefined sinon la paire son type sera undefined ce qui est impossible et si l est de type undefined donc sa valeur sera undefined forcement car seuls les variablestypés autrement peuvent avoir des valeurs undefined alors qu'une variable typée undefined est elle -meme de valeur undefined donc le test retourne juste ce qui est vrai car tt liste paspaire est vide. 
+*************************RESUME:
+si le type est en 2 cas => retour boolean ~ retour type IS predicat sur les types
+le predicat indique le type directement donc dans ce cas:
+l !is pp.. => l typeof undefined donc type l connu => comparaison l!==undefined poursuivi qui donne faux.
+l is pp.. => undefined!==l avec l valeur definie car pp.. donc ne peut pas etre ===undefined sinon pp<T,List<T>> devient undefined ce qui est impossible car sinon un object avec des champs et des valeurs en card>1 devient un type undefined ce qui est impossible car on peut pas creer quelque chose normal avec son type qui sera undefined car forcement depuis la valeur NORMALE on aletype alors qu'on le force a etre undefined tjrs(2) ce qui est impossible.(())
+A RETENIR:
+faire des retours en predicat sur les types pour savoir le type depuis passage predicat et ainsi savoir le type pour pouvoir bien comparer.
+AVANTAGE:
+apres si l en operande il suffirait de tester si elle est vide ou non donc trancher sur son type depuis la fonction ie(l) si elle est juste donc l is undefined => son type est undefined sinon l !is undefined donc de type pp<T,List<T>>.
+RESUME:------------------------
+trancher sur le type inclut une fonction annexe de retour booleen en predicat sur les types retour qui au passage connait le type pour faire les bonnes manipulations dans les bonnes places.(++<<<<<)///
+en resume:
+trancher sur les types => retour de type predicat sur les types
+ =>indirectement en suivant l'equivalence++ type()=>vide dispatcher les traitement selon que la liste vide ou nn avec connaissance type vu application fonction annexe connaissant le type par passage en evaluation.
+QST2:>>
+completer l'api sur les listes par les fonctions head(l)===l.car et tail(l) qui vaut l.cdr.//
+le retour de head et tail implique typof(l)===pp.. alors que l peut etre undefined a faire if,else avec le type de l est quoi via ie(l).
+=>pour tail(l) dans le cas ou typeof(l)===undefined cad. l===undefined le tail est aussi undefined donc return undefined impact pas le retour en type List<T> car tail(l) est de type undefined et vaut undefined:logique.
+1->tail(undefined donc liste vide qui vaut undefined) est une liste undefined de type undefined donc respecte le retour List<T> qui se colle immediatement a l'undefined unlink List<T> PROPOS.
+2->head(undefined) vaudra une valeur undefined et c'est elle qui nous interesse donc let o:T=undefined puis return o; immediat typeof(o) devient undefined car valeur indefinie sinon la valeur connue donc o!==undefined en terme de valeur => le retour cesse en type T mais valeur undefined pour head(undefined) en valeur de type undefined a la fin => pas de contredis là.
+2ieme methode: considerer un type qui joint undefined et T dans la mesure du renvoi pour maintenir le maitien de l'info. parametree T via:
+ function head2<T>(l: List<T>): undefined|T;
+3ieme methode: retourner any en type .
+desavantage using : return (ie(l) && undefined)||l.car permet de considerer aussi l.car dans le cas ou l vaut undefined car undefined peut etre oui ou nn => undefined.car => retomber dans le meme probleme.
+=>meilleure methode: la 1 et surtout la 3.
+les 2 sont bonnes astuces d'une valeur undefined de type no undefined devenue de typeundefined en tsc ou bien type de retour undefined|T.
+les 2 sont en en-tete <T> et d'argument unique List<T>===undefined|pp<T,List<T>> de valeur tjrs undefined.
+=>la methode de retour any aussi mais abaisse la puissance du typage et dans cette direction cest la methode 3 qui est bonne car differencie entre valeur undefined de type T et valeur undefined de type undefined qui doit etre le type de head(l) si l===undefined.(<=><=>typeof(l)===undefined).
+rq: aussi tail(l) en retour type undefined|List<T> differencie entre une liste vide donc de type undefined aussi de valeur undefined et quelquechose qui n'existe pas donc pas de type List<T> qui aussi de type donc undefined car sinon la valeur sera connue mais le probleme de ne pas la REfaire cest que l'undefined pour un type de liste revient a n'importe qu'elle undefined de n'importe quel type car toute valeur undefined nimporte que ce soit sa valeur est de type undefined apres donc a la fin la valeur de retour est de type undefined poursuit le faite existe liste de valeur undefined de type undefined. (meme si la creation de la valeur retournee evite la declaration en type List<T> mais seulement une valeur undefined pas de type List<T> car existe pas de reference en construct(()))./////
+=>tail2 si undefined ca retourne pas une valeur de type List<T> en premier car impossible logiquement depuis pp.. => retour joint la valeur undefined pour exprimer que cette valeur nest pas associée a un type predecesseur List<T>. MAIS le retour si tail(l)===l.cdr === undefined est undefined qui est là de type List<T>=>coherence ADMISE.
+->methode any aussi mais affaiblit les types de retour fonctionnel pour tail.
+rq: return (undefined && ie(l)) || l.cdr
+si l!==undefined => retour de l.cdr marche meme si l.cdr===undefined
+mais si l===undefined ie(l) vaut false dont ca va retourner aussi l.cdr === undefined.cdr IMPOSSIBLE !.//
+DONC structure if else classIQUE./////
+QST3:>>
+si on utilise thatTakesAList ca va retourner {} si l===undefined~ie(l)~!ine(l) et pour {} type est non List<T> car {}!==undefined (valeurs BIEN SUR) donc manipulation dessus impossible car cela impliquerait le retour de null si dans ce cas le type de null est null donc ajout via retour type null | T .. sinon l.car existe et non null donc type===T!==null donc return l.car de type ..[2]===T. CETTE fonction a ete donnée pour montrer le tranchage des types et nn pas transformer une liste vide qui est undefined en une {}!==undefined cela CONTREDIT la construction pp.. qui autorise le complet ou l'undefined en tail sinon..///
+=>qst3: listmapT de type: 
+ suivi PROTOTYPE fonctionnel:>>>>>>>
+  function listmapT<T>(l: List<T>,f: (T)=>T):List<T>
+qui retourne l if ie(l) <=> typeof(l)===undefined
+sinon cest un modele de paire pointee=>en recursivite :
+(nnterminale!!>>>)
+   cons<T,List<T>>(f(head(l)),listmapT(tail(l),f));
+respecte tous les types dans tous les cas de valeurs types1,2 LIST<T> avec f interne bien sur de type: (T)=>T.
+QST4:>>
+fold signifie reduce telque suivant le td7 est une fonction qui prend une liste et une fonction de deux variables la 1ere est acc la 2ieme lelement courant puis applique la fonction en affectant en acc et $2 devient le prochain element<T> DE la liste.
+en left:->  f(acc,x1) puis f(f(acc,x1),x2)
+en rignt:->  f(acc,xn) puis f(f(acc,xn),xn-1)
+f(..,x1)=>f((..,x2),x1) jusqua f(undefined,acc) qui donne acc puis f(acc,xn) puis f(f(acc,xn),x-1) ainsi de suite.//
+en typage la fonction qui prend T,T et retourne T va etre en type (pour eviter multiplicate identifier):
+ (number,T)=>T logique car acc au debut de type number === T..///
+car le but de fold cest de faire des operations entre les elements a partir d'une valeur initiale qui sera forcement de meme type.
+le retour doit etre T car au debut oui puisque apres f(f(),T) aussi avec T en accumulation pas number dissociation et retour T pour application sur 2 elements possibles de T apres remontee et retour T trivialement valeur initiale sert de propulseur au calcul ~ modele de l'accumulateur i dans une boucle.
+LE MIEUX CEST DE CONSIDERER suivant la 1ere classique (number,T)=>T car apres on aura T,T connaissance number remontee#~oui donc marche BIEN.
+=>pour retenir acc number et head(l??) typeof()==T et la valeur finale d'operation sur les 2 doit etre T qui est le but.
+RQ:memesi apres le test est suivant (number,number)=>.. ca se comprend car quand on prend le T apres avoir connu ici dans le TEST l1 qui est de type pp<number,List<number>> en valeur ca sera un element de type number le retour aussi donc PAS DE probleme au niveau de cela.
+=>prototype de la fonction:
+ function lF_rT<T>(l:List<T>,f:(number,T)=>T,acc:T):T 
+AVEC ATTENTION A CECI le type de acc doit etre aussi T apres la valeur acc donnée est en direct evaluation type DONNE number qui est le type T suivant typeof($1)===pp<number,List<number>> car retour T et retour acc si l===undefined cest pour cela lecriture doit miser sur le retour formaté par acc:T pour l'operande $3.
+//cela fait penser a ce que la fonction est forcement interne mais il se 
+//peut que non.
+exemple: creation d'un array a partir d'une liste
+=>reduce suivant f(u,v)=u.concat([head(v)]) donc fonction de type:
+ (number[],T)=>number[]
+en general ca sera une fonction qui prend l'acc de type n'importe quoi et lelement courant de type T et retourne une valeur de type meme que celui de u a savoir typeof(acc===$3).
+type->(U,T)=>U => fonction generique typée suivant l'en-tete <T,U>
+ =>solution utilisant 2 variables de types.
+rq: accumulateur donc retour meme type que cet accumulateur 
+=>considerer U le type 
+=>fonction typée suivant ce modele:
+ <T,U> avec $2===(U,T)=>U et $3 acc $1:List<T>.
+:::
+function rslt<T,U> d'operandes :
+l:List<T> ; f:(U,T)=>U, acc:U
+et de type retour: U 
+en test: si on veut transformer en un arrayy[] faire:
+(pour l1):: 
+  rslt<number,number[])(l1,(u,v)=>u.concat([v]),[]);
+console.log si return dans l'implementation pre-execution.
+resume exo2:(fait tt seul cad. sans observer un mini-truc faisant penser a une methode implicite(cours))
+1->qst1:
+la paire pointee est definie via un type d'objet car car et cdr peuvent contenir n'importe quoi (def. paire pointee) && l'objet derivé~~~²²² doit avoir la meme forme<=>faire un type d'objet pp:-==>
+type pp<T,U>{
+car: T; cdr: T;};
+avec genericite suivant T,U pour generalsier le type.
+(type pp fonction de T,U types des valeurs de champs)
+puis la fonction cons qui cree une liste pointee de type en ecriture function() <T,U>(_car: T, _cdr: U):pp<T,U>
+qui retourne l'objet classique paire pointee pp<T,U>.
+=>objet de la question1: typer les fonctions des paires pointees a savoir les 2 restantes qui sont car et cdr:
+1)car: function car<T,U>(pl: pp<T,U>):T return pl.car
+2)cdr: function cdr<T,U>(pl: pp<T,U>):U return pl.cdr
+fini avec qst1.////
+2->qst2:
+definition du type liste qui inclut le type de la liste vide qui !=={} car object et toute liste est object separation disjointe impossible..=>la liste vide a un type undefined car elle ne se refere pas au modele des paires pointees puisque liste mais en particulier vide donc son type !=={car:T,cdr:List<T>} donc undefined <=> valeur si liste vide vaut undefined car type indefnie.
+=>def. type liste:
+ type List<T>=undefined | {car: T, cdr: List<T>};
+puis les fonctions triviales de ine(l) et ie(l) qui necessitent un tranchage au niveau du type => fonction qui retourne un booleen en type predicat sur les types
+ine(l) en <T> type retour l is pp<T,List<T>> <=> typeof(l)!==undefined
+return l!==undefined
+si l!==undefined donc typeof(l)!==undefined sinon les VALEURS seront egaux donc l pas vide ce qui sera le cas et reciproquement l===undefined donc l!==pp.. car sinon l!==undefined car la valeur sera dans le cas definie donc typeof(l)===undefined donc l est vide alors que l===undefined vaut juste car si typeof(l)=undefined la valeur est indefinie sinon le type sera connu!==undefined=>demo faite!.//
+ie(l) en type retour le predicat sur les types: l is undefined en retournant comme valeur booleenne tout simplement !ine(l) tjrs en <T> avec unique operande l : List<T>===undefined|pp..
+=>narrowing processus permettant dans les fonctions suivantes de trancher le type via ces fonctions en une SEULE fois.(ie(l) SUFFIT)
+retour a la QST2 qui nous demande de typer head et tail les 2 fonctions restantes pour les listes=>
+1)head: function head<T>(l:List<T>):undefined|T retournant undefined!==valeur de type List<T> car existance PAS sinon l.car de type si l!==undefined T.
+2)tail: function tail<T>(l: List<T>):undefined|List<T> retournant l.cdr qui peut valoir undefined de type List<T> devenu desormais undefined ou undefnied type se referant a une valeur undefined meme chose ou l.cdr / typeof(..)===pp.. si l!==undefined && l[cdr]!==undefined.
+=>methode de any pour affaiblir le typage
+=>methode de let o:T=undefined et retour de o pour head(l/l===undefined) marche mais casse le fait que si l===undefined la valeur existante nest pas definie car elle existe pas vue que la valeur de la remontee nexiste pas AUSSI
+qst3->typage de la fonction listmap
+function listmap<T>(l:list<T>,f:(T)=>T):list<T> et qui retourne undefined if l===undefined sinon:
+ cons<T,List<T>>(f(head(l)),listmap(tail(l),f));
+qst4->typage de lF_r 
+->solution utilisant une variable de type:
+(resultat de meme type que le type des elements de la liste)
+function lF_r<T>(l: list<T>, f:(number,T)=>T,acc: T):T qui retourne acc si l vaut undefined<=>!!!ie(l) sinon:
+ f(lF_r(tail(l),f,acc),head(l))
+en generalisation du type de acc soit generalisation de la valeur de retour de lF_r
+function lF_r__v2<T,U>(l: List<T>, f:(U,T)=>U,acc:U):U qui retourne acc si l vaut undefined <=> ie(l)===true <=> !ine(l)===true<=>l !is pp<T,List<T>> sinon:
+ f(lF_r__v2(tail(l),f,acc),head(l));
+voilà: tout lexo2 en resume conscis.//
+rq: la generalisation peut se faire pour listmap car la fonction peut retourner un nouveau type exemple de transformation des elements par encapsulation dans un array via (T===number donc U sera number[] qui est le type des elements de la nouvelle liste en mode mapping --return()<<<<):
+function lp2<T,U>(l:List<T>,f:(T)=>U):List<U> qui retourne undefined si l est egal a undefined~liste vide~ie(l) condition realisee sinon return:>>
+      cons<U,List<U>>(f(head(l)),lp2(tail(l),(u)=>[u]));
+FIN EXO2.
+**************
+******************
+****************************************
+EXO3:>>
+rq: ts-node apres installer en node16 et PATH en export=$PATH:le chemin qui permet de directement deduire que npx contient le bin de tsc typescript en accord avec un modele JS<|/// cad. qu'il a deja installe i.e. au lieu de partir chercher le script dans npx bin apres un sous-script de recuperer la partie dans le dossier general de tsc dans NPX lib puis retour a bin directement in recuperer le file sans verification par au moins des acces structurés puis execute en sortie compilation et transpilation permet de traduire directement sans se rendre compte des fautes de typage=>-w pas interessant dans ce cas.
+rappels: 
+map permet de modifier le contenu d'un array[] via une fontion.
+reduce permet de parcourir frauduleusement un array[].. car profite des données pour faire une operation sur les elements en externe ou en interne de meme type que l'accumulateur sans changer le array[].
+les 2 forment le framework MAP-REDUCE qui permet de faire des operations sur les données puis d'utiliser une fonction dessus depuis un acc pour extraire une chose interessante.
+exemple: un tableau contient comme donné en exercice. un modele dd l'ouverture map-reduce en fonctionnel peut servire a construire un array contenant les memes dictionnaires mais avec une seule info en transformant les elements en string par exemple puis le reduce sur le nouveau tableau peut permettre de construire un string complet avec espace de " " ()/// exprimant les noms des scientifiques sur une meme ligne par exemple.//
+qst1->extraire la liste des noms dans l'odre alphabetique:
+tous les noms commence par une majuscule
+comparateur suivant les operandes de str[0].charCodeAt(str[0]) par sur-classement si superiorite puis retrouver les 3 classées comme convenu via encapsulation dans un nouveau array[] qui sera le sorting du precedent suivant la generalisation de cette fonction comparateur sur les dictionnaires infos données exploitees du array[].//
+=>modele non typé de map(t,f)===_.map(t,f)===t.map(f)===___.map(f)(t).
+1ere chose a faire: recuperer le nom classe en premier alphabetiquement en utilisant la fonction reduce:
+rappel fonction reduce,_.reduce,array[]_NOM.reduce./////
+2iemechose ::  pouvoir reconstruire le array[] suivant un map sur les criteres de reduce precedentes.
+FORMALISATION:>>
+on parcourt pour recuperer le plus petit nom via la fonction dp qui prend o tableau de dictionnaires en appliquant le reduce:
+return:
+ o.reduce((e,F)=>(cmp(e.name,F.name))?e:F,o[0]) avec la fonction cmp effectuant la comparaison entre 2 objets specifiée entre les deux noms e.name et F.name puis retourne le plus petit qui est juste ssi e est le plus petit donc CORRECT:
+let cmp=(s1,s2)=>s1[0].charCodeAt(s1[0])<=s2[0].charCodeAt(s2[0])
+les lettres sont toutes majuscules donc pas de probleme.
+rslt(1): la fonction dp(o) renvoie le plus petit object en terme de nom alphabet debut MAJSCULE().//
+2ieme chose a faire: muter l'objet db via un mapping avec la fonction de remplacement qui prend un element et renvoie dp(o2) avec o2=copie(o) au debut apres avoir fait d=dp(o2) puis o2=delete2(d,o2) et enfin return d ainsi a chaque fois lelement sera en classement suivant cette formule:
+ index i -> le plus petit dans les n-i+1 objets restants apres classification des autres index.(PRINCIPE du tri par selection et insertion~~~)
+=>necessite 2 fonctions:
+copie(t) facile retourne [] si t.length===0 sinon [t[0]].concat(copie(t.slice(1)));
+et::>>>
+delete2(n,t) qui retourne [] si t.length===1 (existence de n tjrs) sinon:  return :>>
+(t[0]!==n && [t[0]].concat(delete2(n,t.slice(1)))) || t.slice(1);
+=>les 2 fonctions cmp et copie peuvent etre faites en utilisant map-reduce on parle de la 2ieme en particulier car elle comporte un parcours la 1ere est hyperfacile:
+let copie(t)=>t.reduce((e,F)=>e.concat([F]),[]);
+=>=>la fontion dp(o) devient:
+return o.reduce((e,F)=>(cmp(e.name,F.name))?e:F,o[0]) celle-ci aucun probleme.
+COPIE2<T>(t: T[]) intervient dans ts(o)
+puis reste un beau traitement cadré de la fonction delete(n,t) peut etre faite en reduce:>>
+let delete=(t,n)=>t.reduce((e,F)=>(F===n)?e:e.concat([F]),[]);
+donc delete et copie et cmp sont bien reglées.
+reste profiter de la fonction dp pour la construction de la fonction ts qui sort le dictio[] suivant l'ordre alphabetique des noms de chaque scientifique soit chaque dictionnaire.
+la fonction ts(o) est la suivante en retour:
+let ts=(o)=>{
+let o_2=copie2(o);
+return o.map((d)=>{d=dp(o_2); o_2=delete4(d,o_2); return d;});};
+=>la fonction ts appliquée a db fait ce qu'on lui demande PARFAITEMENT et elle est construite uniquement grace a copie2 en reduce et delete4 en reduce aussi avec la fonction a 2 variables (e,F)=>(F===n)?e:e.concat([F]) et dp construite sur reduce avec
+ dp(o)===o.reduce((e,F)=>(cmp(e.name,F.name)?e:F),o[0]);
+avec cmp(s,ss) pour toutes chaines de characteres non vides ===
+ s[0].charCodeAt(s[0])<=ss[0].charCodeAt(ss[0]);
+voilà.
+qst1->faite : elle prend la base de données et renvoie la liste des noms par ordre alphabetique.
+2IEME probabilite la liste retournee ne contient que les noms en objets mentionnant l'odre alphabetique des noms scientifiques en liste de noms attachées au terme parlons du nom du scientifique=>au lieu de la 2ieme partie dans ts_v2 on fait :(nouvelle version induite ts_v5)
+return o.map((d)=>{let dd={name: dp(oo).name}; oo=delete4(dp(oo),oo); return dd;});
+=>liste en tableaux de noms attachés aux scientifiques retournée.
+DERNIERE PROBABILITE :
+on veut retourner un tableau de valeurs nom en ordre seulement sans se compliquer la vie facile on remplace la partie apres (d)=>..(||)PAR::
+{let dd=dp(oo).name; oo=delete4(dp(oo),oo); return dd;}
+ou bien directement depuis :
+ _.map(ts_v5(o),(d)=>d.name);
+EN fonction flechee dont le nom sera:>>ts_vf.
+=>en typage:
+il faut typer les fonctions sous-annexes cmp delete4 copie2.
+types des 3:
+cmp:(string,string)=>boolean
+delete4:(sc,sc[])=>sc[]
+copie2:(sc[])=>sc[] avec sc type de l'objet presentant le scientifique:>>
+type sc={name: string, birth: number, death: number}
+&& remarque importante sur String.prototype.charCodeAt qui en typage impose son type qui est le suivant:
+ (number)=>number avec $1===index depuis str le code du char en position index===$1 of String.prototype.charCodeAt .//
+<=>s[0].charCodeAt_<(s[0])===s.charCodeAt_>(0);
+puis typer le db sc[] puis typer les 2 fonctions majeures l'une utilise le profit independant en premier abord²²² de l'autre:
+dp_T:(sc[])=>sc
+ts_T:(sc[])=>string[]
+en mode liste de noms valeurs strings keys noms ordre alphabetique des scientifiques OBJETS.
+fini la question1 en entier.
+qst2->extraire la personne née le plus tot chronologiquement <=> birth le plus petit
+=>en reduce cest facile de la faire.
+let person:(sc[])=>sc=(o)=>
+ o.reduce((e,F)=>(e.birth<=F.birth)?e:F,o[0]);
+affiche la personne née le plus tot parmi tous les scientifiques().//
+qst3->
+remarque si on veut en fleche mieux eviter le type manuelle :(sc[])=>sc=.. mieux demarrer par type to=sc[]; puis type func=(to)=>sc; puis finalement let person2:func=(o)=>person(o);
+retour qst3:>> duree de VIE LA PLUS LONGUE PARMI ces scientifiques.
+facile il suffit un reduce comme avant avec une comparaison pre-selection de la differance entre death et birth soit la valeur:
+ e.death-e.birth
+pour faire cela il faut en premier typer tout le prototype suivant:
+ function longV(t:sc[]):number
+qui recuperer en premier la personne ayant la longue duree de vie (car si reduce ca va retourner vue qu'on demarre depuis t[0] un objet type-- sc) :>>
+let o:sc=t.reduce((e,F)=>(d_V(e)<=d_V(F))?F:e,t[0]);
+puis:> return          o.death - o.birth;
+qst4->la liste des personnes mortes a un age pair:>>>>
+rq sur la qst3 d'abord: la fonction est de type (sc[])=>number prend un sc[] qui est db_t puis fait un reduce pour recuperer le t[0<=i<=2] telque en .death - en .birth est le plus long l'affecte a une variable de type sc retourne une variable de type number (type des keys birth death toutes les deux number) qui vaut l'affectant.death-l'affectant.birth. rq qupplementaire: cest la qst1 qui est difficile en sorte qu'elle ouvre acces par faisabilite reussie toutes le methodes aux questions suivantes a priori la2,3 comme on a viens de voir.//
+la qst4 doit retourner une liste de personnes donc un tableau en reduction de l'original db_t telque ses elements verifient la propriete si element est note p_o:
+ p_o.death-p_o.birth%2===0;
+=>debut par map puis reduce..
+non seul reduce suffira vue qu'on veut concatener depuis une liste sc[] vide les objets en parcourant db_t ou db_t2 qui verifient la propriete a mettre dedans ainsi de suite il suffit de reduce avec la fonction de 2 arguments qui teste si le courant soit l'objet personF est telque:
+ F.death-F.birth %2===0 si oui return e.concat([F]) sinon return e l'accumulateur resultant des etapes precedents.
+=>ca marche a merveille la version copier-coller de ce qu'on vient de dire soit dans le fichier exo3.ts: ps:(sc[])=>sc[] fonction type./////
+--------------------
+************************
+************************************
+EXO4:tic,tac,toe
+resume exos precedents:
+exo1: 3ieme type fonction curryfied format normalement pour se rappeler.
+exo2: typages des fonctions de l'api sur la structure liste via typage d'abort de la paire pointee pp<T,U> puis de la liste suivant type List<T>=undefined|pp<T,List<T>> qui sont des types generiques puis les fonctions sur les paires pointees car,cdr apres cons<T,U> de parametres _car,_cdr puis head,tail sur les listes d'en-tete seulement <T> car ~specilisation de la paire pointee AU SERIVE DE STRUCTURATION IMMUTABLE du type List avec astuce du narrowing pour permettre de trancher sur les types depuis un retour en predicat sur les types par passage le type est connu apres 2 choses: typage de la fonction listmap la meme _.map que sur les array[]===typeof(number[]) mais maintenant sur les listes puis _.reduce sur les listes qui est la procedure fold de parcours sans mutation notée pour le contexte structure de données de types List<T> lF_r__T.
+exo3: map-reduce et typage de quelques fonctions complexes les utilisant en operant sur un tableau d'objets de types a determiner au debut pour savoir le type de tableau ce quelques unes de quelsues une valeurs de ces types cetait en sc[] pour le type sc representant le type d'une personne representee en modele objet qui a commence par ~sort puis recuperation personne avec caracteristiques puis caracteristique ###²²²compliquee sur les personnes en max. d'apport selon cette derniere terminant par une fonction de retour de tableaux d'objets telque les objets proviennent de l'entree sc[] presentant une caracteristique voulue.
+resume exo1:3ieme types; exo2: listes et typage & exo3=>>map-reduce typage fonctions agissant par parcours d'un <T>[] avec T type d'objet dictionnaire en mot de sagesse d'antiquite comme nom donné a l'exo3.
+=>exo4:>>>>>
+cest un sujet a propos du jeu tic tac toe en https://en.wikipedia.org/wiki/Tic-Tac-Toe(morpion).
+<=>jeu croix zero qu'on avait l'habitude de jouer il y a longtemps hh...
+1)c'est un exemple de morpion en morpion grill 3*3(..)
+/tq:>
+a des proprietes diverses:
+a->l'ensemble des positions possibles est de taille tout a fait commensurable cad. que l'ensemble des positions incluant bien sur par def. les * et les 0 sont en evolution proportionnelle statique de coeff.===1 <=> à dire que en terme ensembliste les positions se croisent en cardinal dans une mesure de procede adapte du morpion en taille 3*3 fortement equilibree par le carre geometrique grille donc permit de rendre l'ensemble des positions dans la grille de taille commensurable tout a fait.()
+b->le jeu pour etre fait en TS doit inclure la def. de types objets pour certains dictionnaires de base relatifs aux configurations du jeu ce qui va se passer depuis maintenant au terme de grille et jeu du joueur i faire une croix ou un zero selon le joueur pour mettre en valeur ces portions d'evolution en jeu via ce quon a nomme precedemment des ETATS du jeu (states of morpion game)./
+------------------------resumons:
+le tic-tac-toe est le morpion en grille |3|<=>jeu croix zero.
+=>l'ensemble des positions et de taille tout a fait commensurable.
+&&->!!!l'ensemble des configurations differentes du jeu sont decrites par des objets typés soit des etats STATES.
+RESUME:>>
+1->jeu tic-tac-toe morpion grille de taille 3 croix zero abstraction linguistique.
+2->ensemble positions de taille tout a fait commensurable.
+3->ensemble configurations differentes suivant des etats objets TS typés appeles STATES OF TIC-TAC-TOE GAME.
+1)le nombre de configurations differentes n'est pas evident.
+(nombre d'etats)
+2)le nombre total de parties lui aussi meme pas evident si on compte a rotation et a symetrie pres.
+=>ca varie ..NOTRE BUT CEST POUVOIR donner le modele d'etat et le balancement via fonction au debut et toute a la fin.
+a retenir:
+on estime que le tic-tac-toe de nombre de possiblites en ensembles tout a fait commensurable et le nombre de configurations differentes interpretees comme des etats comme le jeu morpion en croix zero~grille(3) presentant 765 comme cardinal de l'ensemble des etats et l'ensemble des parties === (en cardinal) 26830...
+-------------------------------------DEBUT DE LA QST(1):>>
+la grille 3*3 est representée par un tableau de type string[].
+considerations conventionnelles de code normal:
+---le 1er joueur est celui qui dessine une croix.
+cad. j1 relatif a une croix et cest celui qui commence bien sur donc pour tt ji commencant il doit adopter sa mise en mise croix.//
+qst1->description de l'etat initial:
+>>>initialiseState:string[]=le tableau qui contient que des chaines de characteres vides.
+qst2->fonction stateEmptySlots qui retourne depuis un argument string[] etat courant tic-tac-toe l'ensemble des soit tableau indices des cases vides.::
+pour la qst1: let iS:string[]=f(9); 
+ avec f:(number)=>string[]=(n)=>{return (n===0 && []) || [''].concat(f(n-1));};
+rq: la fonction stateDisp permet de prendre un etat et de l'afficher ::
+ stateDisp:(state)=>void=(s:state)=>{console.log(state);return;};
+ainsi stateDisp(s) avec s un etat permet dans n'importe quelle position d'afficher direct commandes-terminale l'etat defini par la donnée de s.
+pour la qst2:(rq.:>> typeof(s)===state===string[])
+//fonction annexe:
+function index(e,t,n){//n===0au debut(terminale)
+return (t[0]===e && n)||index(e,t,1);}
+function sESlots(s:state):number[]{
+return s.reduce((e,F)=>(F==="")?e.concat([index(F,s,0)]):e,[]);}
+&& typage de la fonction index:
+ typeof(index)===(number,string[],number)=>number;
+voilà.(pour qst1,2;//)
+qst3->
+stateNexts depuis un etat et un joueur 'x' ou 'o' construit tous les coups possibles=>insertion dans toutes les cases vides
+//fonction annexe:()=>..;
+function loop
+let sN__s=(t:string[])=>{
+let t_ps=sESlots(t);
+..
+..
+//il faut faire l'implementation pour voir.}
+=>=>=>fichier exo3.ts.
+**comments depuis ||.// exo3.ts de la qst3:
+&&qst4->..///:>>
+---remarque d'ABORD sur la qst2:
+comme la qst1 permet d'exprimer iS en const string[] possible direct vue que sa manipulation ne conduira pas a sa modification qui avant etait potentielle (surtout aux effets de bord des fonctions de type retour state===string[] de valeur comprend en ++ l'etat de secours suivant) ou bien via fonction f(n:number)=>string[] mieux avec n=card(grille)===|grille| puis lD1 lD2 qui affichent l'etat soit en le retournant soit en retournant void avec affichage en cours passage off on a pu faire 2 choses:
+1->exprimer iS et fonction d'affichage listDisp.
+puis en qst2 l'etat=>tableau des cases vides en terme de index valeurs valant "" probleme rencontre lors du 1er jet
+let sEslots_v0=(s)=>s.reduce((e,F)=>(F==='')?e.concat([index(F,s,0)]):e,[]);
+avec:>>>
+let index=(e,s,n)=>(s[0]===e && n)||index(e,s.slice(1),n+1);
+LE PROBLEME cetait que index de qlq chose qui sera forcement "" peut retourner tjrs depuis nature index(e,s,n) l'indice de la 1ere occurence donc probleme..
+=>pour le resoudre on a fait direct --sEslots_vf:>>
+let sEslots_vf=(s,m)=>(s[0]==='' && [m].concat(sEslots_vf(s.slice(1),m+1))) || sEslots_vf(s.slice(1),m+1);
+en mode recursif terminal.
+rq: pour permettre lusage de lautre fonction v2(s) il faut faire ceci:
+v2:(string[])=>number[]=(s)=>{
+return s.reduce((e,F)=>{if(F==="") {e[0]=e[0]+1; return e.concat([index(F,s,0)+e[0]-1]);} else return e;},[0]).slice(1);
+ainsi a chaque fois que "" a ete detectee on insere l'index naif correspondant a la 1ere occurence +e[0]-1 avec e[0]===0 au debut juste apres l'avoir ++ cest comme si a la fin le e[0] representant le nombre d'occurences de "" soit le card(v2(s:state));.///////
+avec index(e,s,n=0) tjrs===(en mode tout manuel~~~²²²)
+ if(s[0]===e) return n;
+else return index(e,s.slice(1),n+1);
+comme e[0]+=1 ou e[0]++ en e[0]=e[0]+1;
+voilà.
+=>index("",iS/s0,0) retourne l'indice de la premiere occurence str vide.
+=>v2(s) retourne la liste des indices de valeurs vides.
+&& e[0] a la fin le cardinal de v2(s)..///
+rq: trivial >>  card(v2(s0/iS))===e[0]_fin__v2 ===   9.(taille de la grille en * cad. nombre de cases)
+comme resume AVANT DE PASSER a la qst3 : 
+ qst1->2 puis 2.
+ qst2->index terminale && annexe->..;// {la fonction v2(s)}
+         ou direct sEslots(s) 
+ avec: v2 et sEslots fonctionnelles car en mode USAGE REDUCE.
+ commentaires debut de la qst(3):::
+*****dans la fonction insert2 retour insert qst3 DEBUT FILE exo4.js on pense a ce que si indice de lelement en cours e est n e=j ou bien suivant le cadre ../ return j;<=>{e=j;return e;}<=>return e=j; le probleme cest que on cherche l'indice de chaque element qui donne l'occurence premiere de cette derniere donc n recherchee === indice(e,m) avec m loccurence de e dindice n => equation a proliferer:
+ n=indice(e,m)
+recurrente procedure de recherche:
+si lindice vaut 0:>>(n)
+donc il faut inserer dans la position 0 => indice("",1)
+n=1=>insertion dans ..[1]=>indice("",??) car il se peut que la 1ere occurence d'un str vide soit 0.
+si on doit inserer dans la position n il faut chercher ou se trouve "" a chaque fois apres parcours on se met pas dans n et e==="" donc lindice sera > index("",s,0)+1
+=>formalisation::
+let ee=0;
+(e)=> on teste si ee===n si cest le cas return j sinon ee=ee+1 et on retourne e;
+//ca sera sans effet de bord tirage nature retour _.reduce special array[] TYPE.///////
+RESUME:
+on utilise insert_vf(t,l) qui retourne la fonction de parametre n permettant d'inserer dans t le motif l (2choix///) dans la position n
+puis sNexts est facile car affiche a chaque passage loop le resultat de l'insertion de j dans s suivant la valeur de la case vide
+=>variation du numero de la case
+=>utilite d'avoir une version generalisee de insert_vf
+donc:
+elle retournera en tableau la liste des combinaisons possibles resultantes en dautres terme un tableau d'etats ou chaque etat === insert_vf(s,j)(v2(s)[h]) avec h de 0 à strict |v2(s)|
+=>recuperer la valeur v2(s) puis sa longueur (retour number[]..///)
+let ss=v2(s);let k=ss.length;
+puis looping suivant une version terminale
+=>implementation de g(n,h) permettant d'appliquer depuis h à n le processus parametre h et n donné en entree=>h varie a chaque appel recursif ###remontee
+=>g(n,h) sera:
+if(h===k) return [];
+else return [insert_vf(s,j)(v2(s)[h])].concat(g(n,h+1));
+puis retour de g(k,0);
+voilà.
+=>3 methodes selon v2 ou sEslots(s:string[],0_debut) ou bien la 3ieme faisant l'insertion dedans la fonction sNexts suivant::
+insert_v(s,i) car apres on va faire linsertion dans lindice ss[h] de j donc vue h variant une fonction insert_v de $1=s et $2=i indice ou on veut inserer
+let ee=0;
+return s.map((e)=>{if(ee===i) {ee=ee+1;return j;} else {ee=ee+1; return e;}});
+puis avec cela on peut faire la 3ieme version qui retournera g(k,0)
+avec g=(n,h)=>(h===n)?[]:[insert_v(s,ss[h])].concat(g(n,h+1));
+rq.:>> insert_vf oui et correction de v2 en adoptant le meme principe cad. recuperer l'indice oui ou nn >;/// apres avoir dit si ee===cet indice vue que l'entree est ..(s) nn on voit si F==="" et apres pour recuperer l'indice on joue pas sur le monde des occurences seulement l'indice de travail courant -1 <denomme par e[0].
+=>v2 et insert_vf sont bonnes.
+=>derivation des 3 methodes.
+sEslots ne pose pas ce probleme car elle est en recursif terminal.
+resume des 3:
+1->v2 et insert_vf
+2->sEslots et insert_vf
+3->v2 seulement (qst2) avec insert_v(s,i)===insert_vf(s,j)(i).
+rq: insert pas using car presente un effet de bord.
+resume qst(s):
+1=>iS en const oui si prochaines pas effets de bord.//
+2=>(1 cdt. oui car sNexts et sEslots nn 1er utilise insert_vf et v2 pas effets de bord et 2ieme ===v2 pas effets de bord donc const iS=... dans jeu() .. n'affecte pas iS valeues of elements dedans.)
+sEslots en reduce ou version terminale v2 (###).
+3=>sNexts avec v2 et insert_v(s,i) a linterieur presentant un caractere de reducing routine SS FAIRE APPEL explicitement aux implementations d'ordre superieur.
+-----------------4:>
+>>>>>>
+un etat + un joueur => des etats differents selon l'indice du joueur 
+=> en chacun derive de la meme facon l'ensemble des etats correspondants a linsertion du joueur2 depuis l'etat fixé par le joueur 1 depuis ce dernier a la fin ca constitue l'arbre de profondeur donné par ce joueur fonction de lindice d'insertion.
+cad. a chaque nouvel etat defini par un joueur on obtient un etat racine d'un arbre telque ses feuilles sont l'ensemble des parties possibles => l'ensemble des parties possibles depuis la racine letat fixé ../// par le joueur constitue l'arbre des parties possibles de profondeur données pour ce joueur.
+j
+i1 i2 .. iv2(s).length
+..
+feuilles etats finales
+ce joueur lui est donné un arbre des parties possibles de profondeur cad. un arbre via toutes les possiblites probables definies par la profondeur de chaque feuille soit partie donc profondeur de chaque partie => l'arbre presente un ensemble de parties via la profondeur pour recuperer chaque suivi de partie probable de ij a feuille(partie_k) avec j de 1 a v2(s).length
+=>l'arbre des parties possibles pour le joueur en parametre est un arbre de racine le joueur et les feuilles le parcours soigne vers la fin definie par la grille finale soit la partie en general 
+=>cet arbre en profondeur donné pour ce joueur est celle demandée.
+=>l'arbre des parties possibles de profondeur données pour ce joueur est toute l'arbre sauf la racine en ..;??../// est j.
+=>on doit trouver l'arbre de profondeur des parties possibles soit l'arbre de racine joueur est allant jusqua la fin de la partie soit la feuille montrant la grille illustrant cette fin.
+=>arbre de racine le joueur est de feuilles les fin de chaque partie.
+=>arbre en binaire~-----v2(s).length decroissant via debut niveau 3..niveau final===~²²²niveau comme3 -3 + restants cases apres j1 -1.
+1ere chose a faire:
+ =>construire l'arbre depuis iS et en recursion usage sNEXTS.//
+..............
+jusqua maintenant on a :
+SD(s,j) qui renvoie le tree de racine s et de fils l'ensemble des sous-probas.
+cest fait avec:
+SD(s,j)=tre(j,..)
+$2 est une liste d'arbres chaqun a un node letat et un child nil
+=>cv(t) qui transforme un tableau en un tree
+=>cv(t)===tre(t,{})
+puis une fonction qui transforme un tableau d'etats(vF(s,j)) en une liste d'arbres:>>
+cveee(ts)===list(cv(t[0]),cveee(ts.slice(1)));
+avec retour {} si ts.length===0.
+puis retour de tre(j,cveee(vF(s,j)));
+si on veut un arbre listant le2 donc chaque feuille a un sous-arbre l'ensemble de sous-etats
+SD(s,j).child.head pour le premier devient:
+ SD(s,j).child.head qui est un arbre son node reste le meme mais son child devient SD(SD(s,j).child.head.node,jj) apres on passe au deuxieme noeud via SD(s,j).child.tail.head et on fait la meme chose.
+le prochain en dautres termes sera:
+on a pu construire depuis j et l'etat courant l'arbre qui relie j a tous les sous-etats ou bien l'arbre de racine s depart et de noeuds les etats suivants.
+=>on reviendra sur cet exercice(..) dans le td9 en typage forcement.//
+FIN TD8.
+seance debut:
+1->etat intial avec 'x' mise j1.
+2->sESlots(s)=>renvoie en retour les indices cases vides.
+sESlots(s):number[]
+3->sNexts(s,j)=>construit la liste d'etats possibles(coups) a partir de cet etat(s).
+..///
+***********exo4_end.
+(suite avec elaboration idee en cas de failles..///)
+1->>etat initial en retour fonctionnel iS()=string[]
+iS de type : (void)=>string[]
+state0()=t avec t representant le tableau de letat initial.
+2->>sESlots qui prend s de type etat soit tableau et retourne la liste des indices de cases vides.
+exemple:
+state0 prend rien et retourne un tableau de cases vides.
+vides prend s et index d'initialisation a 0 note ee
+puis retourne s.reduce avec (e,F) retourne e.concat([ee-1]) apres ee=ee+1 si F vide soit F==='' ou bien saute ss oublier letape de ee+=1.
+3->>sNexts maintenant
+insertion de j => fonction annexe insert ss effets de bord.
+dedans(s,j) generalisee qui retourne la fonction ou inserer lindex d'insertion est en number:n.
+return :
+(n)=>s.map((e)=>(ee===n)?{ee+=1;return j;}:{ee+=1; return e;})
+avec ee =0 au tout debut puis retour la-haut=>ss_effets de bord.
+=>implementation fonctionnelle.
+let vide=vides(s);//fonction qui envoie le tableau des indices vides
+//=>chaque element remplace par linsertion de j suivant lindex === 
+/:element courant.
+=>suivants(s,j) retourne vides(s).map((e)=>insertion(e));
+AVEC insertion==dedans(s,j) qui prenant un n retourne un nouveau etat apres avoir inserer j dans lindice n===e suivant e de vides(s).
+=>retour tableau des futurs pseudos-debuts de parties.
+((apres mise de j en etant sur s))
+****tests unitaires pour voir.
+4->()!!! stateDepth qui depuis s,j retourne l'arbre des parties possibles en profondeur definie par le joueur j.
+=>modele 1 de l'arbre avec comme modele de retour s avec les fils possibilites induites et le 1er avec fils (nn feuille niveau preference) possiblites induites apres joueur jj=switch0(j///debut) car avec ca on peut facilement faire la suite horizentale sur le meme modele et continuer la suite verticale depuis chaque etat ressemblana tau debut car tout du joueur j=switch0(jj).
+ 1er<=>a1(s,j).
+preliminaires: tre qui prend v,vv retournE: {node: v, child: vv}.
+list de meme en retour {head:v, tail: vv}
+ici depuis j on aurait en profondeur j qui a les fils 
+qui seront tree.child.head le 1er node (1ere possiblite)
+puis tree.child.tail.head le 2ieme node(2ieme possiblite)
+(tree.node ===j puis tree.child liste des sous-arbres en .head le 1er de structure node,child donc tree.child.head qui est le 1er fils tt a gauche PUIS tree.child.tail.head le 2ieme fils 
+rq: tree.child.head.child==={} car tous les fils de j sont des feuilles sauf apres ou le premier aura tous les probabilites de jj)
+ainsi de suite.
+donc il faut que depuis suivants(s,j) la liste des tableaux d'etats ca se transforme en liste d'arbres.
+=>avant fonction annexe permettant le convert depuis un t vers une LIST. 
+commencons par a1(t)=>liste ressemblant a t.
+avec ca on convertit un array[] en liste mais on doit avant convert2(t) qui transforme un etat array[] en un tree car cela va etre demande apres on aura depuis suivants(s,j) un tableau de nodes qui avec a1(t) va se transformer en une LISTE REELLE de nodes cest ce qu'on veut specialement dans la partie tree.child.
+a2(t) va etre donc de retour tre(t,{}) cad. l'arbre de racine t et de fils rien.(fils de fils rien DONC.///)
+puis demarrer bbb(t) qui fera le travail apres ceux-ci qui est depuis s,j construire un arbre de racine j (profondeur!!!) et de fils la LISTE REELLE des nodes===elements de suivants(s,j).//
+to(s,j) qui est la fonction finale
+calcule cette liste via:
+s,j => ces donnees fournissent les possiblites suivants(s,j) note suivi (tableau) qui en map devient tableau de nodes via (e)=>a1(t) puis le resultat new0 et renvoyé en entree de la fonction a1(t) pour transformer un tableau de nodes en une liste de nodes le retour sera tre(j,newF) dans lequel le child newF est une liste de nodes sans fils comme prevu.//////
+=>tests.//
+to(zero,'x') si on veut tester trucs en astuces affichage car objet (tre) on doit afficher:
+1->.node
+2->.child.head.node
+2->.child.head.child pour s'assurer que cest une feuille
+3->.child.tail.head 2ieme fils et meme chose apres feuille via:
+ .child.tail.head.child
+puis un child.tail.(tail)6 pour s'assurer que {} comme indiquateur fin de la liste des child de to(s,j). (et au passage 5(tail) puis .head.node pour voir si bel et bien dernier tableau de probabilite)
+=>to(s,j) construit l'arbre qui depuis j donne tous les prochains potentiels etats apres le jeu du joueur j.
+=>too(s,j) permet de prendre le 1er fils et de lui affecter un child!==nil. ainsi avec cet arbre construit CLASSIQUEMENT on declare que depuis j 1 ou 2 on a lien avec la mise 'x'|'o' puis les prochains possibles etats cad. tu peux jouer avec ta mise soit en rslt ca ou bien ca...(parcours naif des fils en valeurs string[]) puis si tu joue comme cela il lui serait possible de se faire offrir tous ce large choix apres donc possiblites et chaqune renverse le ss-arbres reponses adversaires comme ca le joueur j construit l'arbre en profondeur des parties comme une palette de choix et les attaques apres ainsi le processus de continuite est clair dun cote de dun autre depuis la reponse primaire et les cas possibles de ladversaire en un seul exemple (.child.head.child) on peut facilement construire tous les autres attaques depuis un autre choix du joueur construteur j debut--.
+too(s,j) permet cela retourne l'arbre de debut j puis les fils feuilles sauf le 1er qui contient le ss-arbre bien construits des suivants probas induites apres fin mise joueurJ.//
+************************
+si on veut generaliser pour tous il faut une fonction comme map qui opere sur une liste.
+=>fonction c10(f,l) qui fait le map avec l de type list(,).//
+c10 implemente le contraire de a1(t) car au lieu de retourner une liste depuis un array[] elle prend un array[] et retourne sa liste dedans en prototype to_array(l) puis map avec f(==$2) puis return a1(arr2).
+c10(f,l) est le mapping de l suivant f avec l de type liste.
+maintenant si on veut faire tous cela pous lensemble des fils il suffit de prendre la liste de nodes des fils qui est to(s,j).child et d'appliquer le mapping suivant: ..
+on prend l=to(s,j).child;
+puis le 1er fils (contenu) l.head (apres: l.tail.head puis l.tail.tail.head)
+et l.head au lieu d'avoir son child===nil on aura:
+ l.head .child=to(l.head.node,switch0(j));
+donc (e) pour f et retourne en flechage MODE:
+          e sera ici l.head contenu de la liste des nodes child
+mais sera en node tjrs l.head===e
+et ce e doit avoir un .child!==nil via
+(e)=>{e.child=suivants( ..)};...
+e.child doit recevoir la liste des sous-etats arbres representation
+suivants(e.node,switch0(j)) retourne l'arbre de racine j et de fils les suivantes probas on doit recuperer que lensemble des probas=>adaptation de f.
+(e)=>{let t1=suivants(e.node,jj);//tableau des prochaines probas.
+//e.child doit recevoir la liste de ces probas en nodes
+//donc tjrs meme TRAVAIL:>>> chaque element de t1 suivant a0
+//puis le resultat issu astuce map en a1
+//puis e.child=..}
+=>facilite par fonction c20 annexe qui prend un tableau de tableaux et le transforme en liste d'arbres ou chaque arbre===a0(element_tableau_entree0).
+rq: a0(t) en arbre et a1(t) en liste.
+donc f sera en fin:
+(e)=>{let ff=c20(suivants(e.node,jj));
+e.child=ff;return e;}
+notee fonction c30.
+c30 est generalisee en j et retourne ce quon a dit cad. prend un e node et modifie en e.child=c20(suivants(e.node,j));
+voilà.
+=>tests.
+..//////////
+maintenant fonction tooo(s,j)
+tree1=to(s,j)
+puis le mapping sur tree1.child notee child1.
+child1 liste d'arbres feuilles en entree dans c10
+qui transforme child1 en un tableau de nodes(type tre(,))
+puis fait a chaque node f 
+f=(e)=>c30(e)(jj);
+cad. ICI prend e qui est un node et calcule les suivants depuis e.node et jj puis transforme le tableau des tableaux en liste de nodes puis fait : e.child=t2=c20(suivants(e.node,jj)) puis retourne e.
+donc:
+tree2=c10((e)=>c30(e)(jj),child1);
+problemes des effets de bord:
+chaque node est transforme et devient le retour de c30(node)(jj) qui est le meme node avec les plus qu'on veut donc rien de special.
+a la fin la liste des nodes ou chaqun est un node transforme car son child !== nil puis transformation en liste au lieu de array[].
+donc au lieu d'avoir un child avec feuilles on aura un child qui est tree2=c10((e)=>c30(e)(jj),e.child) les memes nodes avec des developpements d'etats.
+to(s,j).child est une liste de nodes
+donc terminant par {}.
+tt marche bien remarque sur to_arrayyy qui doit au lieu de tester si l==={} car l là contient des sous-objets vides si l est vide normalement par remontee fait :
+ l.head qui est l'objet de remplissage ===undefined ou l.head.node === undefined comme CECI.
+apres child1=to(s,j).child on le recupere cest la liste des nodes
+on fera le mapping suivant c10(f,l) avec l child1 dedans on va recuperer to_arrayyy(child1) qui sera le tableau des nodes car chaque l.head est une instance d'arbre puis prendra chaque element soit chaque tre(,) et appliquera c30(..)(jj) qui calculera les suites de probas avec suivants(
+e.node,jj) puis puisque le retour est en tableau de tableaux le transformera SUIVANT c20(suivants(e.node,jj)) avec c20 prend ts tableau d'etats et le transforme en liste de node via : c20(ts){
+let ts2=ts.map((e)=>a0(e));//chaque element etat en arbre
+puis retour de:>>>
+return a1(ts2);}//valeur de sortie image en type liste de trees.//////
+avec ca on revient a c30(e)(jj) qui apres avoir recuperer c20(t1==suivants(e.node,jj)) fera en sorte que le e courant soit tel que e.child=.. puis retour de e qui est f(e) dans le mapping de c10 ainsi chaque e dans tree1.child aura un child non nulle qui vaudra les probabilites suivantes avec le mapping on passe direct puis puisque arr2=arr.map((e)=>f(e)) avec arr le tableau des nodes on doit retourner une liste donc on fait a1(arr2) en retour de c1à(f,l:List) avec a1 comme dit precedemment prend un array[] et le transforme en liste ainsi le tableau des nouveaux nodes sera une liste ordinaire par matrice STRUCTURE. VOILà!.//////
+donc apres tree2=c10((e)=>c30(e)(jj),to(s,j).child);
+puis return tree1 avec tree1=to(s,j)+tree1.child=tree2.
+le retour de tree1 aura ce quon voudrait.
+<=>arbre de sommet j et de fils les probas de sous-fils les sous-probas apres la mise du joueur suivant deduit de letat proba fixe par la mise ALEATOIRE du joueur j en PARAMETRE.
+resume:
+on prend j on affiche l'arbre qui depuis j donne les possiblites et depuis chaqune possiblite donne les possiblites deduites si joeuur1 mise fixe et joeuur 2 reflexion champ apres tour SUIVANT.
+resume fonctions:
+1->c10(f,l) map sur l de type List utilisant to_array et map sur les tableaux puis a1(t) comme AVANT..///
+ =>to_arrayyy(l) contraire de a1(t) qui retourne:
+(l.head===undefined)?[]:[l.head].concat(to_arrayyy(l.tail)).
+2->c30(e) qui permet de faire le role de f avec generalisation sur j tel que c30(e)(j) prend le e qui sera un node et fait les etapes suivantes:
+ a->calcul les sous-probas en suivants(e.node,j)
+ b->les transforme en liste de node via c20(..)=>c20 annexe FUNCTION.
+ c->fait en sorte qu'avant le retour de e: e.child=..
+  =>c20(ts) transforme un tableau d'etats en une liste de node ou chaque node est un etat de .node le tableau reccurent de .child nil(==={}):
+c20(ts) retourne: a1(ts.map((e)=>a0(e)));
+3->tooo(s,j) final qui prend to(s,j).child en tree1 pour to(s,j) et child1 pour to(s,j).child applique le c10 maPPING pour le child1 avec f=$1===c30(..)(switch0(j)) puis l'affecte cette valeur a tree2 puis tree1 qui est en let VAUT to(s,j) son .child recoit tree2 qui est le mapping precedent puis return tree1 au final qui est en .node j est en .child le meme avec des sous-developpement des .child.head .child!=={}.//
+=>arbre de sous-arbres truquées en j misé.///
+resume:
+tooo(s,j) trace l'arbre avec les sous-probabilites de chaque etat probable fixe|>>.///
+now:>> arbre en complet
+tooo(s,j) a chaque fois que s n'est pas complet<=>vides(s)===[].
+(taille commensurable=> meme si on a eH/V/D 1|||||(s) on remplit toutes les cases cest la loi...)
+a chaque fois que s nest pas rempli calculer tooo(s,j) mais ce dernier calcule 2 niveaux il faut optimiser :
+a chaque fois que vides(s).length>=2 calculer tooo(s,j)
+cdt.1=>..;
+formalisation:
+il faut une fonction qui calcule la taille d'un arbre soit le nombre de niveaux cad. la profondeur de l'arbre...
+tree.child.head => donne le premier sous-arbre
+.child.head => donne le premier sous-sous-arbre
+.child.head(.. . ...///)=>premier sous-sous-sous-arbre tjrs TT a gauche.
+si tree.child est vide cad. tree.child.head===undefined (mieux car objet tree contenant un objet en child de type List) 
+lenT construit une instance tout a fait independante de tree=$1 nommée tree2 de meme valeur puis implemente lent(treee,n) qui retourne:
+(treee.child.head===undefined)?n:lent(treee.child.head,n+1);
+puis retour de lent(tree2,0).//(recursivite terminale)
+fonction ~generalisee mais nn
+tt est en FONCTIONNEL.
+maintenant si on a s,j on peut calculer 
+nbr1=vides(s).length;//nombre de cases vides
+=>nbr1 coups possibles repartis depuis j vers switching(j??) ..///
+on calcule tooo(s,j) (nbr1>=2 au debut) 
+puis on calcule nbr1-taille qui vaut là nbr1-2>=0
+si cest ===0 retourner le tooo(s,j)
+sinon il faut poursuivre
+=>permettre depuis s,j de calculer tooo(s,j) puis de completer le tree comme prevu
+=>fonction de completude du tree completude(tree,j).
+ =>complete le tree suivant la copie du procede de tooo(s,j)..
+AVEC j le demarrage de completude.
+facile avec les données --techniques de completude MEME de tooo(s,j)
+on prend tree1===tree puis child1===tree1.child
+PUIS: 
+1->on calcule tree2=c10((e)=>c30(e)(j),child1)
+puis tree1.child=tree2;
+puis return tree1;
+ainsi completude(tree,j) complete tree avec la mise de j offrant ensemble de probas reportoriees en ss-fils de chaque feuille de to(s,switch0(j)) avec s=to(s_declare,'x') par exemple $1 est zero debuTT.///
+maintenant a chaque fois que nbr-taille!==0 on doit recalculer la completude.
+debut: s,j avec 2 cases vides => privilege de tooo(s,j) pour initialiser le tree du tt debut.
+probleme d'explosion de la pile d'appel => retour congele.
+nn car .length pour vides(s) nn fait...
+=>completude doit se reperer au niveau des .child.head fils sinon on va faire un truc qui est comprehensible tjrs cest pour cela quand se damnder pourquoi lenT(t) reste constant a chaque tour.
+=>premierement fonction qui recupere la feuille.
+completude(tree,j) prend le tree qui a une profondeur de 1 ===lenT(..) et fait le developpement mais si on a lenT(??)===2 apres la completude va operer sur tree.child au lieu d'operer sur ..
+si on a un arbre t issu de tooo cad. de length==2 pour faire le developpement il faut que :
+1->(())   .child.head.child operation dessus.
+tooo recuperer depuis too(s,j) le .child puis via un mapping fait le developpement il faut faire la meme chose mais maintenant sur tous les .child.head.child, .child.tail.head.child car maintenant on a au lieu de .child liste de nodes a developper :  ensemble de ~((type)).child --liste_de_nodes___ qui est EN:: .child.head.child ...
+=>recupere le tableau des feuilles et fait un developpement dessus.
+par exemple une feuille comme tree.child.head.child.head qui est une feuille doit etre desormais la meme AVEC .child=developpement_issu.
+c30(e)(j) fait en sorte que e.child devient en DEVELOPPEMENT.
+e de type node puis e.child=.. si tt.child et on veut le developpement des feuilles soit tt.child.head puis tt.child.tail.head on doit si child1=tt.child developper child1.head puis child1.tail.head donc appliquer le mapping a child1.head.child...
+e de type {node,child}
+et entree to(s,j).child puis tableau de nodes
+puis mapping sur chacun la meme chose ici
+au lieu de faire un mapping sur tt.child on le fera sur chaque ss-fils:
+tt.child.head.child
+tt.child.tail.head.child
+tt.child.tail.tail.head.child
+mapping sur to(s,j).child devient..
+c10 est un mapping sur une liste 
+la liste ici varie donc on doit faire un mapping sur tt.child pour appliquer la meme chose chaque fois(voir plus haut) chacun cad. chaque element de tt.child dans le mapping est un arbre on doit faire le meme truc sur son .child car il contient .node et .child
+c30(e)(j) developpe la feuille e
+si e est un tt.child element c30(e.child)(j) developpera e.child mais e ligne1 est un arbre e.child ligne<2 est une liste.
+1->mapping sur tt.child e qui est une feuille {node,children} en entree c30
+2->on doit par exempler faire le mapping sur tt.child.head.child e qui est une feuille en entree c30 et cela pour tous les fils de tt.
+=>faire la meme chose depuis la liste des fils.
+tt.child.head.child => mapping c30
+tt.child.tail.head.child=>mapping c30
+=>application(tt,j) permet depuis une liste de nodes etats de completer chaque fils de chaque element appartenant a cet ensemble.
+resume:
+tooo(s,j) permet de construire l'arbre qui demarre de s et a comme fils les probas induites par la mise du joueur j puis de chaque proba les ss-probas induites par la mise du prochain joueur ainsi a chaque s,j on a une pallette de choix puix l'ensemble des futurs etats apres chaque probabilite & autre joueur --mise.
+tooo(s,j) deja commentee permet de construire l'arbre de racine j et de fils les probas possibles apres lamise au choix du joueur $2 puis en chaque choix l'ensemble des prochaines mises de l'autre joueur.
+=>arbre en profondeur porte par je joueur j==$2 qui presente l'ensemble des parties possibles en duo-modele operationnel(!!!).
+=>pas de typage car cest le meme exo que sur le td9.
+=>dans le td9 on le fera pas car meme exo donc unique exo porté sur le td9 depuis notre claire facon de principe duo deja faite puis CAR l'exo suivant traite comment faire avec adaptations de structures en structures paresseuses.
+FIN TD8.
+FIN.///
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

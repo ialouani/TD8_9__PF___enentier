@@ -1,0 +1,7 @@
+echo "# TD8_9__PF___enentier" >> README.md
+git init (suivant /home/user/.git)
+git add README.md
+git commit -m "first commit"
+git branche -M main
+git remote add origin https://github.com/ialouani/TD8_9__PF___enentier.git
+git push -u origin main.
