@@ -1,0 +1,81 @@
+//creation de classe:
+//1-sans construct
+var book = /** @class */ (function () {
+    function book() {
+        var _this = this;
+        //donc au lieu de mettre nom de la methode f 
+        //puis : ici le type donc lexpression
+        //f:()=>this.name est incorrect il faut faire le type a la place
+        //de ()=>this.name soit ()=>string. PUIS LA valeur 
+        //pour implementer la methode soit en gros:>>>
+        //f:()=>string=()=>this.name;
+        this.f = function () { return _this.name; };
+    }
+    //on peut implementer une methode directement.
+    book.prototype.g = function () { return this.price; };
+    return book;
+}());
+var book1 = new book();
+book1.name = "a";
+book1.price = 124;
+console.log(book1.f());
+console.log(book1.g());
+//2-via construct
+var book2 = /** @class */ (function () {
+    function book2(a, b) {
+        this.name = a;
+        this.price = b;
+    }
+    return book2;
+}());
+var book3 = new book2("b", 249);
+console.log(book3.name, book3.price);
+console.log("**************************");
+//que la signature de la methode soit son nom optionnelle
+//et les arguments typés ici m de type number et le retour de type VOID.
+//deriver une classe:>>>>>
+var livre0 = /** @class */ (function () {
+    function livre0() {
+    }
+    //comme la classe implementer f direct demarrage f(..){..;};
+    livre0.prototype.f = function (m) {
+        this.price = m * 2;
+        return;
+    };
+    return livre0;
+}());
+//car tt simplement quand on fait f(m:number):void il faut faire{}après
+//sinn si on voulait faire f=..
+//il faut ecrire f:le type (number)=>void affectation = (m: number)=>..
+//cad. f:(number)=>void=(m:number)=>{this.price=m*2;return;}///
+var livre00 = /** @class */ (function () {
+    function livre00() {
+        var _this = this;
+        this.f = function (m) { _this.price = m * 2; return; };
+    }
+    return livre00;
+}());
+var bouquin11 = new livre00();
+bouquin11.name = "ere";
+bouquin11.f(3);
+console.log(bouquin11.price);
+var bouquin11_2 = new livre0();
+bouquin11_2.name = "ere";
+bouquin11_2.f(3);
+console.log(bouquin11_2.price);
+var produit = /** @class */ (function () {
+    function produit() {
+    }
+    return produit;
+}());
+function price2(p) {
+    return p.price2;
+}
+var price_produit = function (p) { return price2(p); };
+var p1 = new produit();
+p1.price2 = 12333;
+console.log(price_produit(p1));
+//l'interface de fonction nommé infos devient un type
+//pour toutes les fonctions qui prennent un p objet instancié depuis la classe
+//produit nom GENERIQUE et retourne un number"";//
+console.log("************************");

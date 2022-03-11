@@ -1,0 +1,971 @@
+resume cours precedents:
+1->paradigme fonctionnel basé sur des briques d'expressions(lambda calcul comme modele de calculabilite fonctionnelle)
+2->
+1)Ecmascript
+2)philosophie, aspect objet web(script/arbres DOM en HTML) et orientation prototype.
+3->portée et recursivite tous les niveaux comme promoteur d'independances de calculs avec limitation des effets de bord (fonctions annexes par exemple) par pûrete des fonctions (internes aussi nn) via suppression des variables en let² dans les boucles ce qui amene a la transparence REFERENTIELLE.
+4->types de données inductifs comme les listes immuables car retour fonction depilation new instance et observation DONC en valeur par via un nom de variable referencée.
+5->1ere classe en generalisations specialisations fonctions 1ere classe methodes back off 1)argument(ordre +) & 2)retour(valeurs definies par la donnée d'une fonction mère comme les modules)
+6->1ere classe : MAP-REDUCE pour le stockage (voir<) & rôle PRIMORDIALE dans le traitement sans traits imperatifs (eviter les if,else..///)
+7->ce cours-ci.
+debut du cours 7:>>techniques de programmation
+techniques avancées PRIMAIRES pour generer un code en fonctionnel:>>
+1-p_typée.(compilateur tsc)
+2-p_dirigée_par____les fonctionS.(et 3-(td a part) controle de levaluation)
+DANS CE cours pour le td8::: typage &&& programmation dirigée par les fonctions.
+PAS TT mais ca illustre des possibilites supplementaires car ouvrent un monde de fonctionnel ~infini.
+***************************************************
+PAGE245:(interactions entre les deux)
+PRINCIPES:
+1-expressions les classer selon des types.
+2-verifier que la composition de ces types au sein d'un programme verifie un ensemble de regles de coherence.
+contre-exemple illustratif: locomotive+flower
+ECMASCRIPT a titre de RAPPEL est un language a typage dynamique : les types existent mais ne sont verifiés qu'à l'execution.
+PAGE246:(objectifs)***********:::::::
+=>rendre le comportement explicite.
+a-outils de verification sur un champ d'analyse statique s'utilisent pour assurer les proprietes de surete sans executer le code.
+b-les types servent de documentation minimale en le specifiant de maniere systematique et succinte.
+=>vus comme des freins au developpement:
+a-prog. ss types est certes fragile, mais permet une rapidite.
+b-dans certains cas, forcer a typer un prograMME peut contraindre voire empecher d'ecrire un code correct.
+PAGE247:(typescript)
+resume des 2 slides precedents:
+etude de la programmation typée qui permet la verification sans execution partiellement et aussi une documentation de specification(ici/) et a pour ~inconvenients # rendre la prog. fragile mais rapide et empecher la poursuite d'un code correct.
+>typescript par microsoft sur-ensemble d'Ecmascript ajoutant une couche de typage.(couche objet, couche modulaire, couche types) C'EST un sur(+)-ensemble(partie de l'orientation en specification des javascript(ecmascript)) de ecmascript (chose totalite de specification => ensemble d'ecmascript et en sur-ensemble precis car typage dynamique evolue back off DEBUT vers typage en code-source).//
+----------------
+=>tsc compilateur transforme un .ts en .js tout en realisant un ensemble de verifications statiques de ces regles de coherence.(cad. ca se transforme en verifiant si ss types back off statique peut se faire en dynamique.js avec coherence..///)
+=>indicateurs de types y sont optionnelles et peut s'ajouter graduellement.(sur la meme ligne au lieu de specifier le type indicateur seulement (pas de valeur) puis traiter l'affectation after)
+PAGE248: exemple sur 1.ts():>>>:
+:>>reverse(str)
+en recursif::
+===str[str.length-1]+reverse(str.slice(0,str.length-1));
+&& str if str.length===0.///
+=>en utilisant les fonctions de String.prototype objet et Array.prototype:>>
+reverse => fait penser a reverse d'un tableau => fait penser a convertir le str en un tableau=>un tableau de characteres (C: str~char[]) mieux=>utiliser split de 1 pour cela=>prog.suivant:
+let R_STR=(str)=>str.split('').reverse().join('');
+voila!//
+si l'entree est number 456 par exemple ca retourne une erreur de type: TypeError.(qui mentionne a ce que ($1=str).split is not a function pas le type nn meme si nom=>tsc,eslint(5.////).///
+PAGE249+250:***************************************
+1er cas: ~javascript version
+=>passer par un medium --typage via any pour tous les types => à voir si coherent lors de l'execution..///
+erreur jusqu'à l'execution du fichier image correct .js typeerror et CONTENU MEME car any en n'importe quelle chose (type) en entree passé par la compilation ne donne rien en terme d'erreurs car any donc choix LIBRE+++.
+=>analyse statique dés la compilation passe forcement par type nn any pour que la compilation affiche l'erreur de typage pour une entrée non string.
+puis le fichier genere est passé en node pour s'executer.
+syntaxe: function reverse(s: string/any):string/any{..;}
+voila/(details presumés en 1.ts)
+(not assignable to a TYPE())**
+v1->typescript 'any' version(execution probleme meme v<./)
+v2->typescript typed version(compilation '' probleme (**)).///
+(error TS(selon versions))
+rq: v11.15.0 pour demarrer le format de tsc..///
+PAGE251:******************************
+resume rapide de ce qui precede:
+programmation typée offre des choses qui aident en style fonctionnel mediée par le compilateur typescript du sur-ensemble de l'ECMA.///
+=>versions any de format medium JS && version(!!!) typée suivant
+syntaxe des types en fonctions arguments && retour pour la compilation sur une detection en cours des erreurs de types .//   .
+-----------------Les types en typescript::
+pour reference, les types des valeurs de base en Typescript sont:
+boolean,string,symbol(keys),number,bigint,&&::::::
+les valeurs nn initialisées,nulles,vides ou inexistantes : UNDEFINED NULL.(soit ler a; => undefined (nn initialisée) ou bien fonction qui donne adresse nulle (return null) a_n() puis let a_1=a_n() et console.log(a_1) affiche l'adresse nulle (valeur nulle)adresse (NULL!!!) nn .. undefined && nulles suivant retour fonction null (~nulle genericite) nn pas return; qui donne undefined (car adresse nn nulle car retour fonction et stockage memoire => case memoire allouée contient rien => la valeur de retour s'affiche: undefined(nn definie..²²///)) && les 2 restantes vides (adresse d'une case vide en valeur undefined et & !null(C_js)) et inexistantes en null valeur pas &.//
+a retenir:
+1-string type (immutables)
+2-number(flottants), grands nombres en big int type.///
+3-boolean & {symbol (type des clés d'un objet)}
+(((car en key?? type connu mais si manip.<;; via key??=.. && dictio. => manips. si avant dictio via symbol pour que l'operation d'ajout de clefs soit coherente via symbol TYPE./////))).//
+et les objets dont on trouve en particulier ces types::
+les tableaux(01): number[],string[]
+les fonctions(02): (a:string)=>void
+=>plus de details syntaxiques systematiques sur 2.ts.
+rq: les types sont optionnels(precision optionnelle en fonction ou en dehors) mais si on veut detecter des erreurs de type bien cible il faut preciser les types pour afficher ces erreurs dans le format voulu exemple d'incoherence au sein d'une fonction des le depart suivant une entree pas bien typée (<) au lieu d'afficher typeerror avec un detail qui prete a confusion(voir precedent cours sur eslint,tsc.)
+=>typescript est un sur-ensemble d'ecmascript contenant l'ecma par l'absence optionnelle des types en mode 0 couche types.
+exemple sur les tableaux:
+let tab:number[]=[1,2,3];
+si string[] puis affiche apres compilation => erreurs(avantage d'avoir des types sous un autre angle).//
+PAGE252:*************************
+***polymorphisme parametrique
+ordre superieur des fonctions en ecmascript produit des procedes de generalisation de 1ere classe permettant de se soumettre a la genericite soit de produire du code generique.
+=>en termes de types, cette genericite est une forme de polymorphisme ce code peut sappliquer a des valeurs de types differents.
+=>concretement, il sagit de polymorphisme parametrique se traduisant par la presence de variables de types.
+exemple de calcul d'occurences
+=>countMatches qui au lieu de tester ??(<T>)[i]===$0 fait if($_ajout++++(..(<<))).//
+=>la variation de la cible induit un format statique de la fonction et adaptation du parametre fonctionnel(generalisation).//
+nbr(a,f) sur 3_js.js./////
+en ecriture typée en polymorphisme:>>
+++demarrepar countMatches<T>(coll: ArrayLike<T>, matchfun:(T)=>boolean):number
+opere sur string ou tableau donc en generique un tableau(number[], char[](C)) dont les elements sont bien listés.///
+donc coll: ArrayLike<T> (T soit number soit char donc coll soit number[] soit char[]~(JS)string) => tt depend de T => <T> apres le nom de la procedure. puis matchfun qui prendra lelement (number ou bien char(string en JS)) donc de type aussi T et la fonction a un number type return.
+=>en typage(<<!!!)
+let res:number=0;
+for(let i:number =0;i<coll.length;i++){
+if(matchfun(coll[i]))
+res+=1;}
+return res;
+=>conclusion:: T est une variable de type(un parametre type) et dans ce cas peut etre:
+soit caractere (si coll: string)
+soit nombre (si coll: number[])
+=>en js fonctionne suivant string || number[].((derive d'une instance du prototype modele de l'instance derivée de la classe Array))
+RQ: l'implementation en fonction polymorphe par parametres types via des variables de types sur mesure²²² possible sur JS.(!!!!!!!!!!!!!)(())
+RQ: pour les fonctions si type a preciser :>>
+f: (T)=>number;///
+AINSI le passage de parametres suit le genericite ouverture et tt ca en menant la fonction en polymorphe --mode via <T> qui souleve le probleme de type via la variable de type T.
+=>methode a retenir: introduire une variable de type T pour une genericite en TS si les types sont a preciser.
+=>comme remarque a faire passer cest que jusqua present on fait des boucles dont cest imperatif et cela est du au fait que coll.slice n'existe pas dans ArrayLike sur notre TS.//
+a retenir:
+<(!!!) imperatif si <T> fait pour inclure la programmation typée dans les procedes de genericite.//
+PAGE253:*****************************
+choses a bien savoir: syntaxe types + <T> pour types && genericite.(arraylike<T> pour string ou number[] si T est string ou number)
+prog. fonctionnelle dans un cadre typé => rencontre dans 97% de parametres typés.
+rq: pour travailler avec la 4.3.4 sans problemes avec node 16.0.0 il faut update typescript dans le premier 11.15.0 (max suivant celle-la(hidden for autres versions++ downloaded) via npm install -g typescript@latest puis nvm use node puis refaire la meme chose avec le npm 7.10.0 ca va permettre de upgrade(+) tsc telque avec .js suivant NODE16 marchera sans problemes de l'api tsc dans 16.0.0 incomprises car evolution.//
+rappels: join,split,reverse.
+rappels2():>>>ramda ss -D encore depuis :>>
+ cp -r ../PF6/node_modules ./
+1->map generalisee retourne si card($#)===1 (curried format) une fonction qui prend en entree un tableau => $1< doit etre la fonction qui agit sur les elements.
+2->zip permet de retrouver le modele cles-valeurs en un tableau de sous-tableaux clés-valeurs(0: key,1:>VALUE) via $1 doit ETRE keys[] et $2 values correspondance ordonnancée.
+zip=(t1[1])=>(t2[1])=>[[t1,t2]];
+ce zip en TS va s'ecrire:(revision ecriture types functions)
+let f:(number)=>(number)=>number[]=(a:number)=>(b:number)=>[a,b];
+ou bien :
+let zip:(number)=>(number)=>number[]:(a)=>(b)=>[a,b];
+ecriture en mode RAMDA:
+zip :: [a]->[b]->[[a,b]];
+(:: card($#)===2 puis sans let car connu prend ss typagE $1 qui est [a](() nn) et retourne la meme qui prend un [b] et retournEE [[a,b]].///
+clef '' meme si "" (!!!) en $#[??]~.//
+si on veut appeler ramda dans un fichier ts il faut faire une liaison de tsc avec les modules npm (-g oui) et cela se fait suivant:>>>
+ npm i --save-dev @types/node
+->maintenant map:>
+>>prend fonction sur ts Functor (curried && suivant l'avant) et retourne la fonction specialisée en cette fonction parametre de la fonction mere(map).
+rapide rappel a memoriser SUR zip:
+zip est de type (:: car double type fonction qui retourne une autre fonction de parametres typés a indiquer)
+       [a]=>[b]=>[[a,b]]
+(ss () se compense avec l'absence de type)((on sait le type sans pouvoir encombrer impliquer ecriture ++(+++) ss () ..///))
+aussi via:
+let zip=(a:number)=>{let g:(number)=>number[]=(b)=>[a,b]; return g;};
+avec cmd->{npm i --save-dev @types/node} pour utiliser ramda.((require  reconnu donc acces de tsc vers node_modules du projet courant)
+->MAP::
+map :: Functor f => (a->b)->f a -> f b;//using mutabilite des tableaux
+cad. prend f et RETOURNE si en entree a->b qui est construct arrayy[3]=[a,b] f a qui est f(a) avec effet de bord donc en f a ca donne [f(a),b] puis f b qui donne aufinal [f(a),f(b)]=_.map(f)([a,b]).
+reprise rapide:
+Functor f qui retourne si en entree [a,b]~(a->b):
+changement par mutabilite en f(a) pour terme 0 via ->() f a 
+puis f b donc arrayy[3] devient si affichage()():[f(a),f(b)].
+(on parle tjrs de ceux de ramda en def. typescript ensembliste <)
+**en HASKELL:
+zip :: [a]->[b]->[(a,b)];//absence d'un sens objet en haskell.
+map :: (a->b)->[a]->[b];//logique d'apres la remarque precedente)
+//limitation a mutation un seul element en HASKELL.
+(1ere en map fait sens a la fonction f qui prend a et retourne b)
+**en JAVA:
+//copy(ne change pas de position en terme de memoire pour la case de 
+//la copie d'une liste donc static)
+copy(List<? super T> dest, List<? extends T> src) en type void car effets de bord sur $1 et en static pour limiter l'using of copy dans le code suivant seulement par:::[aussi pour unifier T type elements dest,src]<//
+   static <T> void copy(List<? super T> dest, List<? extends T> src);
+->fonction de maximum selon le type des elements de coll donc variation via le parametre fonctionnel $2 de comparaison adaptée aux types elements de coll:>>
+static <T> T max(Collection <? extends T> coll, Comparator<? super T> comp)
+resume de tt cela:>>
+length pour _.zip est card('=>/->(())');
+1->ECMA/ramda:
+zip :: [a]->[b]->[[a,b]];
+map :: Functor f => (a->b) -> f a -> f b;
+rq: f a comme + 2 1 qui est 1+2.///
+let f=(a)=>b ~ Functor(!!!!!) f => (a->b);;;
+2->java:///
+3->haskell:
+zip :: [a]->[b]->[(a,b)];
+map :: (a->b)->[a]->[b];
+&& npm i -D @types/node pour inclure require dans les fonctions api du language typerscript.//
+PAGE254:***********************************
+resume de ce qui precede:
+tsc |||syntaxe et types des fonctions/tableaux objetS
++
+genericite via variable de type en en-tête <T>(){..;};//./////////
++
+modele des fonctions comme procede de calcul derive du lambda calcul 
+=>exemple : f=(a)=>b ~ Functor f => (a->b) POUR LA definition en api speciale des fonctions zip et map en ramda :
+1->zip :: [a]->[b]->[[a,b]];//base de pré-bouclage.
+2->map :: Functor f => (a->b) -> f a -> f b.avecf(a,b,c)===f c b a (types recommandés)
+f((e)=>e*2)=g / g===(t[])=>$1(t[][0<=i<=t.length-1])
+avec map :: g -> f a -> f b en remplacement de (part1) par g on procede a g qui applique le mapping du double cad. en [a,b] va faire a=a*2 puis retourner le nouveau t[] puis comme cest curryfiée ca va retourner apres a=a*2 au lieu de t[] h() function ''(s) qui est de retour apres b=b*2($#[0][1]) t[] final soit f b si on veut rien retourner juste faire une action qui est h() en retour<===f b en void pour type retour h.
+en haskell: map suit le role du mapping length 1 array[]
+=>map :: (a->b)->[a]->[b] vue autrement par le fait que si on a une fonction qui prend a et retourne b si on le fait rentrer sur un tableau [a] ca va retourner [b] qui est le mapping de [a] suivant Functor f => (a->b).
+RESUME principal:
+->..-> representent le modele de calcul fonctionnel lambda.
+par exemple si on veut transformer [a] en [f(a)] on lexprime en expression du lambda calcul resultat inclus via:::
+(a->f(a))->a->f(a);
+donnée de la fonction en expression a(entree)->(sortie)f(a)
+puis appliquer en a parametre via <<..->a appliquer en a par entree de f sur un argument a et sortie f(a) <..->f(a).
+Functor f=>(a->b)->[a]->[b] ~ (a->b)->a->b ~ f=(a)=>b avec f permet exemple de faire t[0],t[1]=t[1],t[0] permutation python.
+(an expected=== un attendu)
+retour a la page 254:>>
+exemple de fonction qui effectue soit le predicat d'egalite de $1,$3 soit leur addition soit leur multiplication et tt cela selon $2.
+PRINCIPE: chercher a former une fonction qui permet de faire les 3 choses (>//)=>generalisation=>genericite necessitant une variable de type si les types sont indiqués(///).
+AVEC retour de fonction cible par recuperation apres CONDENSATION.
+si $2 est la fonCTIONN op on teste par exemple si op(n,m)===n+m donc add ET (rappel la fonction permet de recuperer une des 3 fonctions au lieu de retourner le resultat comme ca on aura les 3 fonctions instanciées)..<<<<=>si op est une fonction le retour suivant ce cas doit etre une fonction qui retourne $3($1,$2)~$3 $2 $1~(a->b->(a,b)->a+b)->$1->$2 ... donc 2 cas:
+1)soit la meme => tests de plus => op doit pas etre fonction sinon ²redondance.
+       =>op est choisi de type DYNAMIQUE un OBJET.
+(avec op|// sur 'func' KEY.//)
+&& retour si typeof function (re-retour) la fonction exprimante sinn three(n,m,traduction de op consistance en fonction ARROW)
+=>si on veut add on prend en $3 op qui en 'function' donne (u,v)=>u+v et pour permettre cela il faut passer en $i 1<=i<=2 a,b telque $3(a,b)===a+b et il est en premier donc on passe a,b telQUE a+b#a*b sinon a*b=a+b=$3(a,b) et pourrait donc retourner mult donc on choisit 0,1 puis 1,1 pour op2 car op2['func'](a,b)===a*b#a+b(2#1) donc en 2ieme on a mult puis 2,2 pour op3 car op3(2,2)===true donc evite 4 et 4 types ou bien (car 4 true convert dynamiquement()()()) 2,1 qui donne false en conversion 0#2,3 donc en troisieme position false===false donc retourne three(n,m,(u,v)=>u===v) qui retourne (x,y)=>x===y === Functor equal => (a->b->a==b);////(enable===activer)
+=>RQ IMPORTANTE si on veut declarer en typage un objet (keys connues car l'objet en DICTIONNAIRE signifie une chose avec plusieurs choses donc les termes de cette chose sont deja connues vu que le dictio sa nature est connu meme si declaration en let ss affectation.//
+2 methodes:
+1->///
+2->notion de transpilation:::
+la transpilation est la transformation source to source between 2 languages of programmation like from .ts to new file having same name and .js extension that's a transpilation typescript code.///////
+=>concept d'interface en POO:
+en poo, le concept d'interface permet de definir des abstractions (format generalisé via des TYPES ~ generalisation particuliere pour former un peuso-²prototype d'une classe()) sans avoir besoin d'ecrire de classes,interfaces car permet depuis celles-ci de former des classes en derivation;exemple:
+interface Serializable{
+serialize(): string;
+}
+puis deriver une classe notée Customer via:
+class Customer implments Serializable{
+firstName: string;
+serializable(){
+return this.firstName;}}
+ca definit la signature ou le contrat d'une classe.
+ils sont used just in transpilation. elles disparaissent totalement en runtime etant donné qu'elles ne contiennent pas de code.
+difference entre classe cest que la classe en contient une implementation code via constructor() des instances de classes en poo mais les interfaces que les membres en typage de retour de la fonction constructor comme sous-lien essentielle d'acces limite a ca..///
+cest pour cela vue que c'est ~modele typée de classe il est considere comme un type car regroupe les fondements dont par definition le contrat ou la signature en TS on parle d'interface en type.
+exemple:
+comme represente tous les entiers classes d'quivalence les interfaces representent tous les classes qu'on peut depuis celui-ci implementer donc interface est en quelque sorte un type ET contient des informations methodes function(..($..:typeof(this~))):typeof RETURN donc en general toutes les methodes ~ en interfaces sont des types de fonctions methodes classes avec un nom commeprecise AVANT + proprietes quelques unes car la classe derivée (valeur de la variable flottante type) peut en contenir plus(principe de details supplementaires) meme chose pour les methodes. mais attention tout ce qui est dans linterface doit se retrouver dans la classe implementee la reciproque nest pas tjrs verifiee car on peut ajouter des trucs a la classe implementee apres avoir tout recopier en termes de champs de l'interface derivation----.///
+<=>interfaces de classes.
+=>interfaces de fonctions:
+permet de definir un type de fonctions precises(classes d'equivalence)
+exempleillustRATIF:>>
+interfaces infos{
+(p: Product):number;}
+//permet de generaliser les fonctions qui donnent des infos entieres sur 
+//des produits
+avec Product un type soit avec le principe des interfaces de classes une classe:>>
+class Product{
+name: string;
+price: number;}
+puis on genere ainsi une fonction qui permet de trouver le prix =>
+function pric(p:Product):number{return p.price;}
+avec les memes noms de parametres (p) avec typage.
+puis on declare par let une fonction de type l'interface infos via:
+let price:infos=pric;
+255-263=>9 pages.
+resume:
+interfaces de classes: modele de derivation avec champs en declaration seulement(--)||| typage existant(..). => classe de derivation via class ?? implements interface(??) puis implementation des methodes et affectation() des champs properties.
+=>devient un type de classe donc si obj est une instance de classe on ecrit en argument PAR exemple obj: classe??
+interfaces de fonctions: produit en accolade un type de fonction via les arguments noms et types puis :REtourType ; cad. sans implementation bien sur puis si on veut creer une fonction qui a ce type en MODE declaration let / const f on cree la fonction annexe function(..){return f(..);} puis affectation via f:interface_function??=f<.
+rq: en colors .ts GNUemacs faire M-x puis taper js-mode(js2-mode pour etre precis mais js-mode fera l'affaire en la debloquant(a(()))();;; .//
+->>revenons sur le slide 254:
+patter-matching===correspondances de modeles.
+exhaustivite en rapport avec la reduction en modele traditionnel de type suivant principe de classe d'equivalence en liste nn exhaustive sinn car necessite limite.
+=>le patter-matching permet de faire correspondre des classes a des modeles soit des interfaces ici ou bien des fonctions a leur unique modele qui est le type traduit par l'interface implementée de celle-ci qui disparait apres transpilation car il y a pas de code dedans.
+=>le patter-matching repose sur la nn exhaustivite de la liste des classes presentant un point commmun (au moins des champs similaires en terme de type et existance) via des types de classes nommés interfaces en correspondance avec l'ensemble des classes derivées par implementation de celle-ci depuis l'interface cest ce quon appelle la correspondance en modeles par des types en defaut de la nn exhaustivite de l'ensemble des classes comme classe d'equivalence elements points commun en representation => via type de classe => se traduit en un interface classe dans typescript.////////////
+=>permet de considerer en general de nouveaux types servant le style fonctionnel typé.
+1-application de ces interfaces comme abstraction par nn exhaustivite des classes d'equivalence en types de classes pour les interfaces de classes ou types de fonctions pour les interfaces fonctions (etudies jusqua present):::
+si retour peut etre booleen ou number => considerer un retour en objet (comme avant quand genericite on met <T> sur l'en-tete pour faire la prog. typée fonctionnelle là vu que le retour peut etre un booleen ou bien un entier on retourne un objet(++///)) soit necessite d'indiquer dans le prototype de la fonction le type de retour => ici type d'objet => considerer un nouveau type via un interface qu'on nomme Value.
+car ca va retourner un objet contenant le resultat donc quelque chose qui mentionne la valeur du rslt => nommage du type d'objet retourné Value.
+cet interface value doit contenir le resultat qui est dans le champ val et puisque val:?? car 2 types possibles il faut ajouter un champ de mention qu'on prenomme kind de type string.
+=>Value est le type de retour vue la variation des types de retour de cette fonction qui est un interface car type d'objet enpop(js)=>
+interface Value{
+val;//:type impossible car 2 types
+kind:string;//pour mentionner le type en kind via information
+//encapsulée dans une chaine de characteres.}
+=>la fonction prendra 2 valeurs lval rval dont le type sera Value aussi pour generaliser en servant le titre des booleens comme des entiers.
+&& retour de type value comme on a deja precise(!!!).<<///
+l'operation definie par l'operande op de la fonction op_apply sera soit +*equal___to donc preference de typer suivant 3 interfaces pour rendre $2 ²²²generique suivant un objet mentionnant la nature de l'operation de type via les interfaces de classes.
+=>interface Plus/Mult/Equal contenant un champ kind avec valeur string deja faite pour sous-partionner 1-a~ en l'ensemble des operations traitantes objets fonctionnels.(+,*,&test_d'egalité.//)
+=>op $2 dans la fonction primaire MERE "opp_apply" sera de type Plus ou Mult ou Equal donc implique considerer un nouveau type qui peut inclure les trois via la commande syntaxique de level1 in Ts: type Op=Plus|Equal|Mult
+=>avec tt ca le prototype de la fonction opp_apply s'ecrira finalement apres toute cette analyse:>>>>>>
+function opp_apply(lval: Value, op: Op, rval: Value):Value;
+puis on traite selon le type de op soit la valeur du type Op === valeur de l'interface Op === type Plus,kind;...///////
+=>dedans la fonction op_apply faire une disjonction de cas selon le type Op :
+$2===op qui est de type Op donc une classe presentant un calcul avec decorateurs derivation minimale imposée depuis l'interface qui lui correspond donc il faut si op est donné connaitre son kind possible car op est de type Op qui est un interface contenant kind donc toute classe implementée depuis cette derniere en particulier op contenera un champ kind de meme valeur => op.kind donne le type d'operation a prendre en compte => on switch via les valeurs () de OP.KIND.//
+switch(op.kind){
+case valeur possible numero 1 de op.kind (une des trois en kind des 3 interfaces : return ..
+case string : return ;
+..(meme chose pour finir (3ieme cas))
+puis on ferme doublement pour achever limplementation de la fonction primaire mere.
+1)si op.kind ~ equal on doit retourner l'objet de type Value donc un objet dont le kind est val_bool est en val on aura lval.val===rval.val le retour est une implementation de l'interface classe Value.
+2)si op.kind~(+) on retourne op_apply_int qui est une fonction traitant les operations de +,* seulement et qui retourne l'application de l'operation via $3 loperation traitée en ecriture flechée selon op.kind "op_plus" ou "op_mult" agissant sur lval,rval via le champ val.3)meme truc.
+PROBLEME le retour dans les 2 cas 2) & 3) doit tjrs etre de type Value donc IMPLIQUE le retour de op_apply_int est de type Value donc ignorer le type de f dans $3 de op_apply_int car dedoublement de IDENTIFIER est retour value regle via la commande en fin suivante:
+return {kind:"val_int", val:f(lval.val,rval.val)};
+voilà.
+resume de tout cela CONSCIS:
+si on veut generaliser le type d'un argument ou le type de la valeur retournée par la fonction on passe par un argument/retour objet de type suivant un interface classe.
+si on cree un interface inter_class par exemple qui represente les classes de point commun les champs valeurs si possibles de ceux retrouvées dans inter_class et si on veut considerer un type d'objet qui se refere a un type interface par exemple Value est le type de lval qui sera un objet contenant le champ val; et le champ kind:string; donc Value sera ici un interface type classes derivation minimale et si on veut considerer un n de type Value on fait const n:Value={kind:"number",val:valeur choisie} ainsi n est de type Value qui est un objet possible en pop et par exemple op qui definit un dictionnaire traitant une operation arithmetique ca sera vue la variete des types de fonctions representaitves un objet de type Op avec Op type de cette operation op cela implique de definir trois interfaces en equivalence avec les 3 operations traitees ici => interface Plus,Mult,Equal puis mettre le mot-clef kind de type string avec valeur puis si on veut une operation a passer en parametre qui sera soit suivant plus,*,===booleen doit donc etre un objet qui contient le champ kind meme que celui suivna tle schema de patter-matching via a titre dexemple const op_addition:Plus={kind:"op_plus"} et cela passera forcement par la necessite de switcher selon la valeur de op.kind voulue donc op presente 3 aspects => selon la construction de nos interfaces 3 types donc il faut que op:Op dans $2 de la fonction opp_apply permet de faire penser a ce que Op peut etre le type Plus ou Mult ou Equal => considerer un type les rassemblant en disjonctions via la commande syntaxique: type Op=Plus|Mult|Equal 3 types d'objets op possibles possedant en valeurs (op) le kind |>>===celui de l'interface dans le schema d'exhaustivite => si on veut une operation a RENSEIGNER il suffit apres avoir fait type Op=Plus|Mult|Equal fair addition par exemple const add_numbers:Op={kind"op_plus"} avec tt cela on peut tester par console.log(op_apply(lval,op,rval)) qui retournera selon notre modele un objet de type value dont le champ de type string kind exprimera le type du retour de l'application de l'operation mere sur $1.val & $3.val et le champ val contenant le resultat.
+voilà.//
+cest fini pour le slide 254.//
+*********************************
+-----------------------------------------
+2ieme technique de programmation apres la programmation typée et avant le controle de l'evaluation: la programmation dirigée par les fonctions
+PAGE 255:*****************
+style centree autour des ensemble de fonctions comme la programmation evenemtielle :
+1->data-driven programming qui est un style centre autour des ensembles de fonctions (carfonctionnel) qui engage a structurer ses programmes de facon a pouvoir organiser et modifier le flot de controle de maniere dynamique.
+2->event-driven programming style manipulant le flot de controle autour des evenements.
+**les 2 considerent les traitements comme des données a part entiere.
+**les fonctions, profitant de la 1ere classe, s'inserent naturellement dans de tels styles de programmation.
+(data-driven saved cuz exemple having initialize property of first class)
+(event-driven keeped cuz exemple having return property of first class)
+a retenir:
+en prog. fonctionnelle on peut s'y retrouver respecter le style data-driven qui permet l'organisation en structure de flots de controle mediés par la variation des données considerees qui deviennent des données derivées de la propriete initialisation de la 1ere classe en style FONCTIONNEL a part entiere(principes de briques elementaires d'expressions et de calculabilite) ou bien en event-driven qui se centre sur l'ensemble des fonctions via la donnée des fonctions en propriete return de 1ere classe et aussi argument permettant dans le style fonctionnel de guider les flots de controls suivant la donnée a part entiere des fonctions cest dirigée par les fonctions (event,rien ou callback) contraire de la precedente qui permet une structuration en mode construction d'expressions fonctions de données aussi evaluations de fonctions visant la propriete initilisation des fonction de 1ere classe en ecmascript.
+***************************
+*******************************************************
+*****************************************************************
+PAGE256:>>
+fonctionnel & typé :ok! (suivant la specification ecmascript (pop(poo)) et le language compilé trnaspilé pour execution TS)
+=>programmation imperative en C.(python aussi mais le C est lexemple emblematique Ocaml aussi..()[fonctionnel marche bien])
+&&:
+programmation web en html(hypertext markup language) mediée par les trucs programmés en javascript => balise script code .js dedans => inclut la programmation script(au service de la web l'une impplique l'autre)
+..///
+=>page 256: hyperapp comme bibliotheque de 1ko de JS permettant de programmer et illustrer des appliquations web riches en fonctionnalites relatives a cette application.
+&----->le language BASIC en interpreteur (event-driven)
+puis interets en guise de CONClUsioNN de la programmation dirigée par les données que ce soit des fonctions (modules) ou bien des expressions resultantes de composition de fonctions en data-driven PROGRAMMING.
+rq: hyperapp introduit le code html suivant un style de plus fait par des lignes de CSS.
+=>(&<< BASIC sur un modele de l'event-driven sur le meme code en interpreteur BASIC)programmatio web/script en ajout de <html,CSS s'avere esssentielle en complement de l'imperatif,fonctionnel,type transpile en specification de l'ECMA,orientée objet,orientée prototype.
+=>en resume apprendre un peu de HTML/CSS et surtout css et la partie script des code html est essentielle pour apprehender la place de hyperapp npm module dans les pages html d'applications web donc.//
+*****************************>retour a la section produit slide 256:
+(le cours va inclure bien sur un apercu complet detaille sur html comme language d'organisation de la page et le css comme language de control mise en forme(police,etc...) avec du javascript pour enrichir nos pages web sans oublier l'hyperapp comme un module npm utilise dans la partie script du code html qui contient le code css ou le lien vers le fichier css en link balise part head in html code=>application abstraite du compteur + application fondamentale de la calculette)
+->retour a la page 256 : >>
+on cree une application web cad. une apk sur une page html --web => il nous faut une base soit app dans hyperapp depuis import {app} from "hyperapp" puis importer les elements essentiels au compteur qui sera 3 cases la premiere contient le numero initalise a 0 puis la 2ieme + et la 3 - cela se fait par l'importation du 3ieme truc important qui est button puis l'afficheur principal en h1 puis div en liens de description en limitee de la page appliquant la demo unitaire double de l'apk => import {div,h1,button} from "@hyperapp/html" cad. on importe la fonctionnalite button et la construction grossiere en functor div puis les mises en services via les liens h1(tjrs..). Initial state at 0 via const initialState={count:0}; (div pour mettre le contenu de h1(but) et les operations d'incrementation et de decrementation button (appuis)) + on initialise l'etat decrit par la partie view a un objet DOM reduit a 0 en mode count ../// puis on declare les possibles actions en objet la clef down qui prend rien du tout et retourne (curried format) une fonction qui prend state(etat en objet) relie a la fonction() down pour retourner en () l'objet de state avec count recoit state.count-1 meme chose en contraire se passe pour up tjrs congelation puis nouveau state inclut retour entre () du meme objet en appel (de modification) via un key en .count === state.count+-1 cest comme si le state contenera une ecoute d'events.. puis the view via une fonction flechée const view = (state,actions)=> ce quon doit absolument faire cad. la construire via div qui prend un array[4] en first h1(state.count) puis 1er bouton en second ainsi que le 3ieme en third respectivement les suivants: button({onclick: actions.down},"-") qui signifie creation d'une case servant de boutton avec le click defini par actions.down et le - servant de procedure de mise a jour linkée en modele totale de fonction ecoute d'evenement + callback donc resumons importation puis state initial puis the view qui suit les actions possibles. puis la fonction d'appel en tournement modulaire abstrait applicative level3 (tie everything togheter) qui est app(initialState,actions,view,document.body) pour creer la partie apk dans le code html : cest l'exemple d'une page permettant de manipuler un compteur.
+resume:
+la prog. dirigée par les fonctions 
+=>1er style du data-driven
+=>2ieme style du event-driven
+2 styles centrés autour des fonctions en pf grace a la 1ere classe des fonctions JS.//
+la prog. dirigée par les fonctions amenent a faire des actions suivant des fonctions qui permettent des actions de comportement soit par ecoute retour fonction et application optionnelle d'un callback associé style paraissant fonctionnel rentrant parfaitement dans ce cadre soit trivialement par transpilation pûre d'un code imperatif en fonctionnel grace au language typescript de fonctions 1ere classe faisant par cela l'ecma comme modele reduit² d'exemple de prog. dirigée par les données au lieu devenements comme precedemment.
+=>exemple du compteur qui propose une prog. web respectant le principe du style fonctionnel en mode EVENT-DRIVEN.///
+PAGE257:*****************
+rappel sur le script precedent:
+1->import {app} from "hyperapp"
+2->import {div,h1,button} from "@hyperapp/html"
+3->const iS={count:0};
+4->const actions ={
+down: ()=>state=>({count: state.count -1)},
+up: ()=>state=>({count: state.count +1)}};
+5->const view = (state,actions) => div(
+[h1(state.count),
+button({onclick: actions.up},"+"),button({onclick:"actions.down","-"})]);
+6->app(iS,actions,view,document.body);
+A RETENIR que le view est une fonction qui prend state,actions et retourne en retour de div via arguments entrees h1(state.count) puis les 2 autres ~similaires citons l'un des deux qui est button({actions.up,"+"});
+resume en tout de l'illustration de l'event driven au service du profil fonctionnel des scripts html des applications web:>>
+=>prog. evenementielle.
+=>les traitements sont attachés a des evenements.
+!!!!=>les traitements sont organisés dans une liste actions et il transforment un etat global.
+conclusion generale:
+etendre ou contraindre les actions possibles peut se faire dynamiquement en modifiant actions.
+fini pour cette partie.
+PAGE258:**********************************************
+techniques de prog. en style fonctionnel a part le contrôle de l'evaluation :
+1->prog. typée.
+2->prog. web si on veut generaliser car elle inclut le modele dirigé par les fonctions qui tient sa place dans l'event-driven via les callbacks pour des fonctions en ordre+ en continuation parfois et aussi inclut le modele (l'autre les fonctions deviennent des données a part entieres car travail sur des modules(principe du call-back) representatifs par les fonctions en 1ere sorte) data-driven en ecma (1ere classe) donc <=> style fonctionnel en MODE direction données en 2 classes distinctes : les données seront tjrs des fonctions mais soit en mode actions a appliquer par calcul de l'expression via un contrôle continu en retours (expressions) data-driven ou via la formalite des evenements qui contrôlent le suivi event-driven au profit de ts pour le premier et pour le 2ieme au profit comme on a dit au debut : developpement web, programmation evenementielle et paradigme script de transpilation(typescript au lieu de js).///
+=>exemple de l'event-driven comme style de direction fonctions données evenements modulaires via le script web du compteur qui prouve que le changement des actions fournit une acceptabilite dynamique ..///
+-----------------**exemple autre:
+=>page 257: event-driven au profit de la prog. web
+=>page 258: event-driven au profit du style fonctionnel normal non mise en place fonctions API NodeJS par exemple:>>
+((qui transpose des callbacks..///)) exemple via LE language BASIC:
+on en let declarent 2I et S toutes en majuscules avec numero de la ligne (id,basic) tout avant si I +=1 on reecrit :: LET I=I+1 puis S=S*I soit 2 puis IF (!(I=N)) I+=1 puis 40 qui transforme S en S_avant*3===1*2*3 puis S en 1*2*3*4 si I!=4 avec I++ avant ainsi a la fin au lieu de GOTO 30 on ecrit THEN GOTO 70 qui est :: 70 END apres 1*..*(N-1+1)=N! === S donc calcul de S en N! fin prog. qui suit le modele classique de fondement assembleur: 
+1->idée: (tirage recursivite~)
+int i=1;
+for (int j=2;j<=n;j++) i*=j;
+return i;
+=>recursivite en Ocaml(imperatif,fonctionnel,oo)
+#let rec fact n =
+   if n=0 then 1
+   else n*(fact(n-1));;
+fact : int -> int = <fun>
+ou bien:
+#let rec fact n=
+   match n with
+    |0->1
+    |_->n*fact(n-1);;
+val fact : int -> int=<fun>
+=>recursivite en lisp(imperatif,fonctionnel,oo pour l'anti-dialecte Racket)
+(defun factorial(N)
+ (if(=N1)
+    1
+  (* N (factorial(-N1))))
+https://studylibfr.com/doc/2024921/le-langage-assembleur-intel-64-bits
+2->en assembleur ~ modele vieux interpreteur BASIC:>>>
+voir lien precedent.//
+voilà.
+BASIC ressemble a assembleur suit lien et tirage depuis ~recursif via modele ocaml et modele lisp/racket:(A RETENIR)
+modele ocaml
+let rec fact n =
+   if(i=0) then 1
+   else n*fact(n-1);;
+fact: int -> int=<fun>
+donc tjrs en recursif let rec nom_de_la_fonction comme declaration d'une fonction anonyme typage apres(comme js) avec rec et n ss entre () suivi DE: if(i=0) then 0 else 0*fact(n-1);;
+ou bien via trancher sur n par le mot clé match n with
+let rec fact n =
+   match n with
+    |0->1
+    |_->n*fact(n-1);;
+val fact : int -> int=<fun> ajout du terme val...
+=>modele en LISP:>>>
+tjrs debut entre ():: (defune factorial(N)..)
+comme ca on declare par defune comme define en python suivi du nom et arguments en () comme precisé(lambda-calcul procedurabilite..///)
+(defune factorial(N)
+ if(=N1) 
+   1
+  (*Nfactorial(N-1)))
+apres la condition de N=1 <=> op(N,1) operande de fonctionnabilite 
+=>en lisp = N 1 car 1+2+3 en lisp sera + 1 2 3 retour a la ligne sans le then et valeur de retour sans le retour comme js : 1 et puis sinon retour a la ligne nouvelle fonction()=>entre () N*fact(N-1)<=>~lisp(()):
+     * N factorial(N-1)
+puis fermeture parenthese de defune.//
+le retour est implicite et explicite sans imposition par rapport a js en ocaml via les types limité ((compilé)) : fact: int->int=<fun> ou bien si match n with existe :=>> val fact:(!!!)int->int<fun>
+retournons a la page 258:
+SI ON veut transpiler le code evenementielle non orientée web---script ni api en language APK il faut considerer chaque ligne du prog. basic comme un objet car 2 proprietes existantes dans la version BASIC++ numero ligne et instruction => 10 LET I =1
+~JS:>>
+       {num: 10, instr: {kind: "..Let",id:"i",expr:{kind "..int",int: 1}}}
+<=>la ligne est un objet de numero avec l'instruction sur description en kind et operandes en id et l'expression via modulation typage par kind comme expression de int (let (int)=..) et ((())) int qui vaut 1 
+=>construction du modele objet ligne de basic via l'objet de numero d'instruction en general (kind,id) et l'expression resultante de l'Application en kind et valeur DONC de ce int qui est 1
+=>construction COMPLETE de la ligne 1 de basic via l'objet en position 1 du prog. qui est un tableau d'instructions soit un talbeau d'objets de lignes.
+pour 20 LET S=1 meme chose
+pour 30 qui fait I+=1 (rq: expr fait partie de la clef INSTR) la partie num en valeur 30 puis instr en kind tjrs let et id==i (generalisation perdant en progressivite(..///)(())) puis ca se joue au niveau de expr qui en kind ne sera plus exprInt car pas let pour declarer un INT mais si let en expr progressivement depuis un kind Bin avec op en kind opPlus puis venant de instr let i puis expr en kind Bin avec op on doit y rajouter lhs .< qui en kind Var var "i" et rhs>. kind expreInt (1ere ligne) et en int 1 ca va signifier qu'on declare en let un i depuis une expression qui suit un calcul binaire avec op_plus entre 1ere ligne variable en kind Var et var i et un simple int (exprInt) en int===1.//
+=>30 faite et aussi la 40 meme chose op===op_mult.
+=>60 en kind Goto avec num qui detaille instr de type goto qui est 30 et la 70 en num puis instr directement instrEnd qui est connu
+reste la 50 
+en instr kind JumpIf qui est va faire en jump/[]===#||1num (delignE)
+qui se decrit en details via la condition en cond key de instr apres kind
+contenance I=N exprBin avec opEqual comme kind de op suivi dans cond de lhs et rhs tjrs avant num 70 le lhs en kind Var et var i mem chose pour le rhs (var:"n") avec ce dernier cela signfie que la condition would have jump in the case of being asking of equality between i and n and by that getting yes.
+voilà.
+PAGE259:****************************************
+cest une interpretation via lequivalent as an array of lines in ecmascript.
+**partir d'un etat gerant la ligne courante et l'environnement:
+const initaliseState={num: 10, env:{n:{kind: "valInt", val:4}}}
+**gerer une instruction goto:
+const GOTO=(line)=>(state)=>{env: state.env, num: line.num};
+**gerer une instruction let:
+const LETTT=(line)=>(state)=>{
+ env: {... state.env,
+        line.instr.id: evalExpr(line.instr.expr, state.env)},
+        num: state.num + 10};
+PAGE260:*******************************
+=>exemple d'un data-driven recpectant le courant le la prog. dirigée par les fonctions via le style fonctionnel.
+!!**
+1)) les actions du language peuvent etre stockage dictionnaire goto,let,jumpif qui sont en : (line)=>(state)=>{...}.//
+2))les données ici sont le programme a interpreter sous la forme d'une liste d'instructions, et la liste des actions appliquables pour chaque instruction.
+a retenir: ligne en identifiant numero en interpretation via ajout en 1er de linstruction et les expressions actions si passe par linstruction (~callback) avec numero.
+->const actions dictionnaire :
+ goto,jumpif,let:(line)=>(state)=>{...};;
+->POSSIBILITES:
+lister les actions disponibles en ajouter ou en enlever dynamiquement (dynamique par la donnée des données retours de fonctions au lieu du courant fonctionnel statiquement comme l'autre(data-driven vs. event-driven))
+& tester le comportement d'une seule instruction est facilite.
+tjrs:
+instruction qui est expression action apres mise en service de quoi depuis le modele des actions (instr qui contient la partie expr)...
+PAGE261:********************************
+hyperapp pour calculatorix(16) avec AC via hyperapp en utilisant:
+const computer qui en "+,-,*,/ est une fonction flechée d'operation binaire2() le courant puis l'etat de depart en initialiseState qui contient:
+fn: "",
+carry: 0,
+value: 0,
+hasCarry: false}
+carry 0 en appui depuis le vide avec hasCarry false qui signifie ne pas faire l'operation qui vaudra 0 trivialement parlant mais afficher avec fn le rslt carry=0.//
+resume surtout de la partie basic:
+=>style du data-driven en fonctionnel via des fonctions d'appels
+=>modele des callbacks en prog. normale fonctionnelle 
+ =>necessite une interpretation depuis l'equivalent basic
+   =>a impliquer le modele des lignes instructions en array[] of objects
+     =>induction DE:
+   1)state in 0 (data-driven) qui sera lenvironnement avec la ligne de depart
+ 2)))gestion du let/goto/jumpIf via des fonctions curryfied 
+  (line)=>(state)=>(retour objet tjrs comme le type d'etat initial()())::
+ a-pour goto qui contient en 2 le numero et en 1 l'environnement a considerer (traduction de laction en passant a la ligne portant la donnée de l'environnement car la ligne induit new action limitation role partie de goto) : env: state.env
+state vaut dire l'etat courant incluant le resultat de jumpIf false
+b--let 
+pour goto qui prend le num en argument le retour passe a laction suivante avec env tt va bien mais pour let in faut retourner le debut de laction suivante avec comme numero en retour state.num +10(basic fournissements) et pour levironnement avec connaissante du precedent en state.env :
+env pour goto cest le meme state.env precedent(///) mais pour let vu que prog est en lignes et chacune sur (260) num,expr qui contient le dictionnaire instr complementaire => let en env cest l'environnement precedent avec l'ajout du nouveau via nouvelle clef marquee par une couleur ou bien tt simplement env en retour let a une valeur de state.env en melange avec la nouvelle variable qui est dans line.instr.id qui vaut comme state.env qui est une liste de clefs variables et leurs valeurs => en line.instr.id on aura avec lexpression dans instr complement-- connu qui est une fonction~~~ de state.env et l'expression elle-meme dans line.instr.expr donc :
+ line.instr.id: evalExpr(line.instr.expr,state.env)
+expr dans instr car on sait la nouvelle variable affectée apres le line.instr (kind<//) et en .id donc reste lapartie expr qui contient tout donc on la recupere avec state.env si variables explicites usage donc ca donne ca ; en resume:
+le data-driven en style fonctionnel respectant les call-backs se fait facilement par interpretation en modele equivalent deduit:
+=>prog en tableau de lignes a part le num instr qui passe par expr qui contiendra une clé de kind op si necessaire avec lhs rhs ou bien directement en kind int le int clef suivante valeur apres instr > kind,op nn mais kind²²²,val of int (op apres kind elle aussi genericite op: {kind:""}).//
+=>modeles de dictionnaires d'instructions contenant l'expression modele avec les details des sous-operations(basic..///²²²) en mode clef instr>expr 
+=>necessite en presumé un dictionnaire d'instructions en partie majeure la partie expression 
+=>~en dictionnaire de constructeurs d'expressions 
+=>dictionnaire d'expressions au lieu d'instructions avec remplacement de la donnée partie instr>kind,id en fonction d'operandes sur les données de la partie expression
+=>dictionnaire d'actions donc car expressions tirage données seulement + fonctions en entree ces derniers
+=>dictionnaire d'actions avec etat inital comme env en state <=> env.state d'etat courant puis modify by new action of a function
+=>dictionnaire d'actions comme base du data-driven les données qui leurs evaluations poursuivent ces actions sont bien sur en argument suivant un changement d'etat recurrent et passage à l'etat suivant precise dans la partie num de initaliseState nn=>=>partie num dans le retour des actions
+=>modele d'interpretation reussi en apply js.
+retour a la page 261=>en resume tjrs remarque sur hyperapp.
+(code js avec hyperapp comme script dans un code web d'html.//)
+a retenir:
+prog. ->?/-- fonctions
+=>data-driven,event-driven()
+1->exemple du Basic.
+2->exemple du compteur script dans une page web.(ecoute-EVENT)
+le 2 peut nous amener a programmer ce qui est 261 mais faut l'html en partie script et aussi un peu DE css..///
+le 1 il faut entrainer a le faire..
+a retenir:
+#let rec fact n=
+   match n with 
+     |0->1 //if(n=0) then 1
+     |_->n*fact(n-1);; // else n*fact(n-1) 
+val fact: int->int=<fun>
+|| fact: int->int=<fun>
+(recursivite du ocaml en flechage interieure mot-clef de MATCH)
+&&
+(defune fact(n)
+ if(=n1) 
+  1
+ (*n fact(n-1)))
+(recursivite du scheme en mode f(a,b)~f a b donc n*m<=>*(n,m)=>* n m)
+basic ~ assembleur
+&&->>hyperapp en npm off script html.(api/1ko)
+   <=>applications web dynamiques.(())
+PAGE262:******************************
+interets apres la prog. evenementielle
+=>!!!penser les programmes comme des ensembles de comportements avec peu de dependances applicables et composables a la demande.
+=>de tels ~// agissement dynamique sur ces comportements : les lister, en ajouter ou en enlever...
+rq: liste comportements accessibles variation dynamique la verification du code est rendue plus difficile.
+=>application du data-driven dans le fichier 5.js.
+FIN PF7/PARTIE1 .
+FIN.******************
+=>controle de l'evaluation
+263-282=>7+12-1===18 pages.
+PAGE263:>>
+technique de programmation comme la prog. typée ou bien prog.->FONCTIONS celle du data-driven ou bien de l'event-driven tous stylisant le paradigme fonctionnel en prog.//()
+=>def.:>>>>>>>
+ maitriser le flot de controle en le stoppant et le reprenant en fonction des besoins du programme.
+<=>permettant de manipuler le flot de controle en le maitrisant par controle tjrs de certaines evaluations concommitantes ainsi stopper le programme en fonction des besoins apportés ou en le reprenant.
+=>envisage technique plusieurs+++:>>
+>.//
+=>le deboguage de programmes profite naturellement de pouvoir arreter et reprendre le cours d'execution cad. si on veut deboguer notre prog. avec un outil d'implementation a visee normalement logiciel, celui-ci se retrouve dans un type de controle d'evaluation donc les etapes decrites vont se meler sans apport du controle donc il profite naturellement de pouvoir arreter et reprendre le cours d'une execution. 
+=>=>nombreux problemes pour lesquels la terminaison n'est pas evidente peuvent aussi beneficier du controle de leur evaluation :
+ *exploration de grand domaines (arbres jeu)
+ *algos nn garantis de terminer (calcul de limite)
+ *programmes dependant de facteurs externes fetch url(aller chercher)
+PAGE264:***************************
+1ere methode:
+les fonctions se pretent bien au jeu du controle de l'evaluation.
+=>CONGELATION
+to freeze une expression e <=> construire une fonction qui renvoie e lorsqu'elle est appliquée.((faite dans un des td(s).....))/////
+exemple:
+fact(10*10) => calcul long bcp
+la fonction ()=>fact(10*10) version congelée.
+def. decongelation::(TO THAW)
+appliquer la fonction pour recuperer la valeur enfermee a linterieur de cette DERNIERE.
+PAGE265:***********************
+=>e froozed will be thawing dans le moment voulu.
+**possible de congeler n'importe quelle E:
+Une valeur dans le controle de levaluation peut ne jamais etre decongelee si jamais lutilite de se presente.
+failingComputation renvoie ce que doit etre renvoyee si on a error 'Yikes' en curseur throw .. singifiant probleme de type Yikes dans la valeur enfermee=>utile si on veut afficher une erreur Yikes sur n'importe quelle erreur dans un if sans PARTICULIER.((ss preciser ~via--valueARGUMENT ou se trouve le probleme dans la vraie valeur enfermee))
+=>Uncaught Error erreur nn capturee via class Error d'argument construct(())==='Yikes'.
+PAGE266:*************************
+si on veut tracer les etapes a chaque appel recursif:
+ console.log(`fact(${n},${r})`);
+affiche fact(5,1) puis fact(4,5),fact(3,20) puis.. fact(1,120) puis vue return & console.log affiche 120 valeur de retour a la fin.
+PAGE267+268:************************
+frozenFact(n,r) retourne:
+ ()=>frozenFact(n-1,n*r);
+en meme affichage affiche fact(5,1) puis retourne une fonction [Function:(anonymous)] car retour de ()=>frozenFact(n-1,n*r)(separation travail memoire..)
+..///>
+ recuperation de la valeur pas a pas:>>
+n!=frozenFact(n,r)()()()() donc considerer 5 valeurs incluant la 1ere qui est la base: frozenFact(5,1).
+et en affichant les si de i 1 à 5 on affiche indirectement fact(n,r) de n-- |1 et r=1à120 pour n==1.//
+=>permet obtention fonction realisant ses calculs pas a pas.
+=>ecriture ss forme terminale importante ici.
+(pourdire la remarque precedente)
+PAGE269:***************************************
+APPLICATION DE CETTE METHODE: les trampolines
+les stockages de certaines adresses ou valeurs correspondant a une place referencee en memoire viaune allocation non statique est soit sur la pile pour ceux qu'on a fait et sur le tas pour ceux qu'on a implicitement declare.
+int* p=malloc(sizeof(int)*3) pour p &tableau_ordinaire()() de taille maximum 2 permet d'allouer la case nouvelle p donc cest une donnee sur la pile mais return f(f(a)) permet de considerer en entree f(a) qu'on reutilise dans pas statique allocation mais dynamique pour le compilation gcc => stockage de &f(a) dans le tas cest un type d'arbre ou ca permet retrouver lelement en priorite..
+=>une trampoline permet d'enlever toutes le couches de congelation d'une valeur congelee.
+trampoline(e)=(typeof(e)!==typeof(fact(5,1)))?e:trampoline(e());
+en recursif.
+en utilisant type instance de Function
+avec boucle while:
+ while(let 1>>res=e instanceof Function) {res=res(e);}
+puis retourner res qui verifie !(res instanceof Function).
+a retenir:
+=>application de trampoline(e:expression congelee donc de type ()=>..)
+=>peuvent etre utilises pour evaluer les fonctions dans le tas plutot que dans la pile car la fonction a evaluer suivant trampoline permet de decongeler en remontant donc parcourir les elements qui seront alloués dynamiquement par le programme suivant un non malloc pour pouvoir les referencer a vue d'yeux et les recuperer facilement apres donc stockage de ces valeurs dans un tas y compris la valeur de retour fact(5,1) en expression seulement~stockage expression congelee cest pour cela qu'elle servira d'evaluer les fonctions dans le tas car cest dedans ou se trouve les valeurs annexes seulement pour rslt_final donc evaluer les fonctions sur le tas plutot que dans la pile.((cf. CHAPITRE SUIVANT COMPLET SUR CELA))
+=>ils permettent ainsi d'ecrire en recursivite debarasser se des limites de la taille de la pile.(stack overflow) car adresses separees car valeurs dans le tas desormais puis en trampoline on remonte via un transfert vers la pile de res() puis depilation de la valeur apres retour donc depilation induite INTERIEUR car pas adresses ou valeurs a la sortie.//
+fact(1100,1) sera en stack overflow on empile a chaque fois fact(n-1,r) a la fin derniere valeur empilee 1 puis on commence a depiler par depilation et avant stockage dans le tas ou bien affectation valeur en tete *=terme depilee ainsi de suite jusqua n-1! qui est depilee apres n*n-1! qui est la base de la pile normalement retournee.
+impossible car la pile explose=>frozenFact(1100,1) le permet (en terme de calcul).
+!!!: r.T->;// ..
+//////////////////
+frozenFact(1100n,1n) n signifie number n:number en valeur<=>valeurnumber.
+ca retourne Infinity car big number mais ca se termine jusqua la fin vue l'affichage final predecesse d'au moins fin de fact(1,Infinity).//
+PAGE270:**************************
+cette technique => diverses strategies d'evaluations.
+PAGE271:********************strategie d'evaluation par valeur
+l'evaluation par valeur de f(xi) consiste a evaluer recursivement les xi avant de les transmettre a la fonction.
+f(2,4-1) => en strategie d'evaluation par valeur passera par f(2,3) et nn pas travail avec 4-1 expression CORPS de la fonction f.
+PAGE272:***************************by name
+call-by-value ### call-by-name
+cette strategie impliqueune substitution des xi sans les evaluer dans le corps de la fonction f avant d'evaluer f.(duplication of eval)
+PAGE272:************************paresseuse>>>
+lazy evaluation or call-by-need ameliore call-by-name en memorisant les calculs realises afin de na pas les dupliquer.
+exemple sum_squares va retourner en call-by-name square(4-1)+squre(2) puis x*x+square(2) avec square(4-1) affecte a let x; la VALEUR 4-1 puis retourne x*x puis on a le retour affiche AVANT.
+EXEMPLES:1pf7.js
+PAGE274:********************************
+resume: call-name call-value lazy evaluation or call-by-need.
+call-name=>comme tel et call-by-need the same mais memoriser le calcul puis travail dessus ~call-name EN ameliorant un peu.
+call-value=>tous les arguments sont caulculés BIEN avant l'entree.
+**HASKELL applique une strategie d'evaluation parresseuse par defaut.//**
+3~~~melange de call-name et call-value.((vue qu'a travers memes noms))...
+RAPPEL: si e pure (WHERE expression:=e) donc elle derive d'une application de fonctions ss aucun effet de bord meme interne donc transparence REFERENTIELLE les resultat de son evaluation ne depend pas du moment ou elle est evaluee.
+REMARQUE: prog. parresseuse ne peu s'appliquer correctement que dans des calculs sans effets de bord car sinon f(f(a,b),b) calcule f(a) puis integre le tt dans $1 in f ARGUMENTS ce passage de declaration doit se faire ss effets de bord car il se peut que f(a) b b change b donc la valeur suivant ce mode ### de la valeur si f(a,b) est envoyee directement => pas de transparence referentielle de cette expression => c/c: lazy evaluation dans la programmation ne peut se faire que si les calculs sans ss effets de bord. quand elle sapplique elle permet de ne realiser les calculs qu'au moment ou ils servent car calcul dependance effet de bord que lorsque sa valeur using in the future any caller function VALUE => realiser les calculs qu'au moment ou ils servent au debut passage nom ORDINAIRE et parfois deles eviter.
+PAGE275:**********************************
+exemple du tri fusion dans le modele haskell servant ~à voir que lorqu'on trie on divise puis on concatene les 2 parties triées la lazy-evaluation IMPOSE que si retour sur autre triage fusion de partie 1 partie 2 reste intacte dans la pile comme ca on evite de moins en moins les inconvenients de l'encombrement.
+=>syntaxe bizarre de evens[] =[] puis evens[x] = [x] puis
+ evens(x:_:xs) = x: evens xs 
+--takes a list and returns the list of even-indexed elems.
+odds meme chose avec:
+ odds(_:x:xs) = x:odds xs
+--takes a list ans returns the list of add-indexed elems.
+splits a list into two parts
+cleave xs = (even xs, odds xs)
+puis melange two sorted lists
+merge xs [] =xs puis merge [] ys = ys
+puis merge xs@(x:t) ys@(y:u)
+ |x<=y = x: merge t ys
+ |otherwise = y:merge xs u
+''applies the merge to a list
+merge_sort[]=[] merge_sort[x]=[x] 
+merge_sort lst=let(e,o)=cleave lst
+ in merge (merge_sort e) (merge_sort o)
+puis compute min by: min xs=head(merge_sort xs)
+.....//////////(pas important juste pour completer lazy-progr. exemples dans un language utilisant ce type d'evaluation fonctionnelle qui est une strategie du controle de l'evaluation..TECHNIQUES)();////
+PAGE276:*****************************
+valeurs congelees=>stockage dans une structure de données.
+EXEMPLE:
+une liste peut voir sa tete et sa queue congelees.
+les decongeler permet de deplier la liste au fur et a mesure des calculs.
+PAGE277:******************************COMPLEtude sur les structures paresseuses:>>>
+si on veut prendre une fonction qui retourne une liste qui est congelee a partir d'un certain degre:
+function frozenCoins(){//retourne une liste congelee 
+//en vrai ~²²² tableaux de Coins 'heads' 'tails' selon un random >0.5
+//donc 'heads' sinon 'tails' mais celle ci est de retour congelee
+//cad. retourne une liste 1er element car application connu
+//mais la suite(.cdr) et une liste d'elle meme frozen de la meme facon
+//donc .cdr===frozenCoins car ()=>frozenCoins() via le cons
+//pour declarer le head de .cdr !!!
+const aFlip=(Math.random()>0.5)?'heads':'tails';
+return cons(aFlip,frozenCoins);}
+//the tail of the list is frozen.
+en retour de la premiere evaluation on a la liste:
+ {car: selon_RANDOMM, cdr: [Function: frozenCoins]}
+****si on veut construire une fonction de telle facon a ce que cette liste soit decongelee en1er level 
+=>elle fonctionne de telle facon a ce que c.cdr ne soit plus une fonction mais son retour soit cons(aFlip_a,frozenCoins)
+flipACoin2(c) fonctionne en recursif:
+1->si c.cdr est de type typeof(frozenCoins) alors c.cdr=c.cdr();return c;
+2->sinon c.cdr est une liste mais c.cdr.cdr peut etre non
+ =>return cons(c.car,flipACoin2(c.cdr));
+en utilisant le test sur typeof(c.cdr)==='object' car si cela est juste cela veut dire le tail n'est pas congelee car!==function() donc voir c.cdr.cdr
+=>pour cela il nous faut aller jusqu'a la fin a chaque fois que typeof(c.cdr)!=='object'(designation du typeJS objet(())) faire c=c.cdr donc il nous faut une copie independante => let pointer=c car types immuables.
+trivialement apres on doit faire a la sortie :
+pointer.cdr=pointer.cdr();
+rq1->c n'est pas du tt affecte.
+la valeur pointer change et a la fin sa queue devient evaluation(queue())
+au lieu de faire cas contraire: s.cdr=s.cdr() on retourne 
+cons(s.car,f(s.cdr))
+avec l'arret => s.cdr=s.cdr(); return s;//meme que la premiere la difference cest que au lieu de faire s.cdr on retourne DIRECT:
+ cons(s,s.cdr());
+la 2ieme version avec pointer permet de visualiser la liste de tail decongelee comme debut ss0=>en retour PREMIER la liste de tail decongelee soit la liste avec car,cdr decongelee<=>car et puis cdr===frozenCoins=>[function: frozenCoins].///////////
+direct ou bien console.log du resultat retour FONCTIONNEL avec a chaque fois en 2 si on veut le meme comportement faire ss0=ss1 pour garder le mem truc f(ss0) qui se developpe petit a petit.
+<=>structures paresseuses.
+PAGE278:********************************
+ces structures permettent d'envisager :
+**de construire des structures detaille quelconque,voire infinie.
+**de construire des structures qui se developpent selon un algorithme.
+EXEMPLE: monte-carlo tree search
+exploration de l'arbre des parties d'un jeu pour evaluer les coups optimaux.
+PAGE279:*****************************************
+   LES PROMESSES:
+ils sont le bon goût de pouvoir se composer sans s'evaluer:
+let fzInt=()=>fact(10); valeur congelee
+supposons vouloir la transformer par Math.sqrt sans la decongeler
+ => 
+              ()=>Math.sqrt(fzInt());
+**en generalisant on obtient une fonction agissant sur les valeurs congelees:
+VOIR 1PF7.JS.//
+PAGE279:***************************le truc sur LES PROMESSES:::
+DEF: une promise en Ecmascript est la realisation d'un calcul asychrone.
+instance de la classe Promise de parametre constructeur la fonction à 2 arguments: resolve qui est appelee sur la valeur envoyee par la promesse et reject qui est appelee sur la valeur d'erreur en cas d'erreur.
+A la difference valeur congelee, une promesse continue a etre evaluee des sa difinition.
+..=>suite seance prochaine.//
+debut seance:
+ +exemple sur la promesse promise. comment faire la seance precedente
+on avait lu sur la documentation de mozzilla comment y proceder.
+>>DEBUT approche de developpement:
+1-calcul asychrone: definition en ce qui est pas rythme par une horloge. le calcul ne se fait pas suite a un ordre dinstructions en suivant lordre de reference temporel mais suivant un schema de preference structure par des mises en niveau d'evaluation controle. le calcul qui se fait pas en se soumettre a un ordre particulier mais a une preference se qualifie dasynchrone car nn rythme au modele dinstructions car en general peut se faire ou nn si on parle de la structure de controle if else comprenant 2 #(s)!//
+----------------
+2-La promesse est en soit promettre de faire ceci si cela suivant la structure hiearchique de if,else donc par definition appris la realisation d'un calcul comme qlq chose d'essentiel au passage qui sera emporte en terme de donnees tirées apres donc un calcul asychrone. Car lA promesse doit se definir via une instance de classe poo ou de prototype promesse (modele predefinie d'une PROMESSE) en pop et se voit passer par toute sa lecture meme si elle sera dite apres donc un calcul asychrone EN GENERAL.
+-------------------------EXEMPLE:
+la promesse d'avoir en retour d'affichage la valeur str 'hello' debute en terme de creation par une instance de la classe Promise const promise=new Promise declaration ordinaire classique d'une instance puis donner les arguments la on passe en $1 la fonction qui fait tout le TRUC cad. une fonction qui exprime de promettre de retourner hello apres 10 secondes par exemple. la fonction ainsi independamment de la structure promesse va etre:
+function(resolve,reject){
+//setTimeout avec $1 que faire et $2 en cas passage 10000ms soit 10s.
+setTimeout(function(){resolve('hello');},10000);
+puis fermeture de $1 de la promesse en terme de ARGUMENT pour construction.
+}
+donc pour la promesse qui retournera hello si passage de 10s il faut faire => fichier 1pf7.js.//
+A RETENIR:
+a->resolve: appelee sur la valeur envoyee par la promesse
+et reject appelee sur la valeur d'erreur en cas d'erreur.
+**************#valeur congelee, la promesse sevalue des sa definition type particulier de calcul asychrone.((contient une valeur congelee cad. une valeur accessible qu'apres avoir appeler la promesse indirectement mais le fond sevalue en superficie des le debut))
+mais pour retourner il suffit pas dafficher le nom ${}_\\ seulement car ca reste congelee compensation avec le fait que l'evaluation se chaine:>>
+**********
+************
+**************************
+les promesses sont des calculs asychrones, il est la aussi interessant de pouvoir les composer:
+la methode then permet de specifier que faire a la fin du calcul
+.then et pour argument la fonction qui prend la valeur retournee et fait qlq chose...
+a-->soit en retournant si on veut modifier puis .then (value)=>affichage de celle-ci en value ca se comprend des 2 cotes que la valeur va se modifier puis s'afficher.
+b-->ou bien directement via .then en prenant value et faire ce que doit etre fait si on veut affichage ca va se faire via console.log(value).
+-------------------------------------------------------------------------
+calculs asychrones=>ouverture sur la composition car application selon un critere volant donc .then(critere)()<=>application via composition de fonctions.
+resume: calculs asychrones => composition de fonctions..EN PF!!!
+la methode catch permet de specifier que faire en cas d'erreur.
+composer les promesses ou les valeurs congelees cest construire un calcul en composant des fonctions.
+---------------->resume voie 1pf7.js.
+*******CONCLUSION:-------------------------
+(rq. les promesses sont bien detaillees sur 1pf7.js)
+
+1)->l'etude de la PF peut s'aborder et se developper sur plusieurs techniques: prog. typée, controle de l'evaluation qui a de certains avantages ou bien la prog. dirigée par les données soit en web via les events soit en fonction unique et data-driven via le modele de BASIC interprete.
+2)->la maitrise de chaqune de ceux-là nest pas evidente et depasse le cadre de ce cours comme le data-driven, le developpement web, la philosophie du compilateur de Typescript ou bien tt simplement le controle de l'evaluation pour les calculs asychrones.
+3)->l'idee centrale au fait que les fonctions sont des unites de code portables, reutilisables, appliquables a la demande, et permettant d'organiser dynamiquement le flot de controle d'un programme.
+4)->la suite du cours portera sur l'archite cture de ces ensembles de fonctions.
+
+
+
+
+
+FIN DU COURS7.
+1->Typerscript(TD8)
+2->controle de l'evaluation:
+a->to frooze, to thaw && trampoline
+b->les structures parresseuses (monte carlo search tree)
+c->les evaluations en call-name, call-value, lazy call or call-by-need
+d->les promesses pour la composition de parties d'un ensemble formant un calcul asychrone.
+FIN DU COURS7.
+FIN.//
+
+./////
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

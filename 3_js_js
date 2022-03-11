@@ -1,0 +1,13 @@
+function nbr(a,f){
+    if(a.length===0) return 0;
+    return (f(a[0]) && 1+nbr(a.slice(1),f)) || nbr(a.slice(1),f);}
+function f(cible){
+    return function(b){
+	return b===cible;};}
+let str="gtfgrhgtfygrtgfrgfrgfrt";
+let f1=f("g");
+console.log(nbr(str,f1));
+let tb0=[1,2,1,4,1,2,333];
+let f2=f(1);
+console.log(nbr(tb0,f2));
+console.log(typeof(nbr));

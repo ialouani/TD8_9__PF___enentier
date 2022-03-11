@@ -1,0 +1,52 @@
+//reverse un str
+function reverse(str){
+    if(str.length===0) return str;
+    else return str[str.length-1]+reverse(str.slice(0,str.length-1));}
+let str1='hello world';
+console.log(reverse(str1));
+//reverse dans les tableaux.
+let tb=[1,2,3];console.log(tb);//eviter -,..,-!!;///
+console.log(tb.reverse(),tb);//muable=>effet de bord.
+//();///
+//reverse pour les str passe par conversion en tableau
+//split permet par $1=" " de transformer en un tableau 
+//d'elements en gros espaces ok.
+//si str.split() seulement $1===undefined => donne rien car tt
+//accolé en un tableau de str unique (length===1)
+console.log(str1.split());
+//preferance de diviser(tiré de la recursivite de la fonction resumée reverse:>>
+console.log(str1.split(" "));
+//si depuis ce tableau reverse est possible on aura world hello
+//si on fait l'inverse de chacun on aura le resultat
+//=>passer par str1.split(" ").reverse()
+console.log(str1.split(" ").reverse());
+//on encapsule- dans une fonction.
+/*function reverse2(str){//apres on fait le join tab[] -> str[](C).//
+//=>commencer par des tests sur tb.
+    return str.split(' ').reverse().join('');}
+console.log(reverse2(str1));//suivant until 0..{1,c/c:2..;}/////###()().////
+console.log(tb.join(''));*/
+//ce test fait preuve d'une union depuis le dernier element(!!).
+//=>si ..reverse() donne world hello et on fait join ca va s'aligner 
+//depuis le debut qui sera la fin donc on aura si $1_join===' '
+//le str1_new2[0]===..=>$1 of split function joue un rôle important!!!
+console.log(str1.split(""));//donc si " "(!!///) ca fonctionne
+//normalement l'espace entre les deux les coupent suivant 2 elemets dans 
+//un tableau mais si "" ca signifie rien coupe donc en char[] (tableau
+//de characteres) => cest ce qu'on veut.
+//=>le transformer comme ca puis inverser puis join en $1=='' pour 
+//accolement SANS oublier que l'espace fait partie des characteres de str1
+//donc element du tableau => apres ..join('') on accole tt et l'espace comme
+//element est compris dans l'operation => resultat voulu.
+console.log(str1.split("").reverse().join(''));
+//formalisation + details sur resume7
+function reverse_VF(str){
+    return str.split('').reverse().join("");}
+console.log(str1);
+console.log(reverse_VF(str1));
+console.log(str1);//car retour fonction donc :>>
+//EN GENERAL PAS CA str est une valeur immuable.//
+//voilà.//
+//console.log(reverse_VF(456));
+console.log("***************************");
+

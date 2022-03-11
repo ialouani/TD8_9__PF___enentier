@@ -1,0 +1,10 @@
+function reverse(s: any):any{
+return s.split('').reverse().join('');}
+console.log(reverse('hello world'));
+//console.log(reverse(456));(erreur a l'execution
+//car probleme de coherence(meme chose typeERROR car s.split ici $1 fixe
+//not a function)
+function reverse2(s: string):string{
+return s.split('').reverse().join('');}
+console.log(reverse2('hello world'));
+//console.log(reverse2(456));(erreur a la compilation)

@@ -1,0 +1,17 @@
+//comme la fonction zip.
+//fonction curryfiée comme titre de developpement ciblé:>>>
+let f:(number)=>(number)=>number[]=(a:number)=>(b:number)=>[a,b];
+console.log(f(1)(2));
+let zip:(number)=>(number)=>number[]=(a) => (b) => [a,b];
+console.log(zip(2)(3233));
+const _=require("ramda");
+console.log(_.zip([1,"e"])([2,"rt"]));
+function fr(a:number):(number)=>number[]{
+//fr(a) doit retourner la fonction (b)=>[a,b]
+let g:(number)=>number[]=(b:number)=>[a,b];return g;}
+console.log(fr(23)(47));
+let h=(a)=>{let g:(number)=>number[]=(b)=>[a,b]; return g;};
+console.log(h(2)(43));
+console.log(Object.getOwnPropertyNames(_.zip));
+let obj=_.zip;
+console.log(obj['length']);//card(pseudo$#)./

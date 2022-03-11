@@ -1,0 +1,153 @@
+/*let printComputation=()=>{console.log('Now');};
+printComputation();
+let failingComputation=()=>{throw new Error('Yikes');};
+failingComputation();*/
+function fact(n,r){
+    console.log(`fact(${n},${r})`);
+    if(n<=1) return r;
+    else return fact(n-1,n*r);}
+console.log(fact(5,1));
+function frozenFact(n,r){
+    console.log(`fact(${n},${r})`);
+    if(n<=1) return r;
+    else return ()=>frozenFact(n-1,n*r);}
+console.log(frozenFact(5,1));
+console.log("************");
+let s1=frozenFact(5,1);
+let s2=s1();
+let s3=s2();
+let s4=s3();
+let s5=s4();
+console.log(s1,s2,s3,s4,s5);
+let type1=typeof(()=>fact(5,1));
+function trampoline(e){
+    if(typeof(e)!==type1) return e;
+    else return trampoline(e());}
+console.log(trampoline(frozenFact(5,1)));
+function rslt(e){
+    let res=e;
+    while(res instanceof Function){res=res();}
+    return res;}
+console.log(rslt(frozenFact(5,1)));
+console.log(rslt(frozenFact(1100,1)));
+console.log("*******************");
+let square=(x)=>x*x;
+let sumSquares=(x,y)=>square(x)+square(y);
+//strategie d'evaluation par valeur(value-call)
+/*let sum_squares=sumSquares(3,5-1);*/
+//avant d'evaluer soit de rentrer dans le corps 5-1 est remplacee par 4
+//puis square(3)+square(4).
+
+//call-by-name
+//l'evaluation sumSquares(3,5-1) evalue directement en prenant
+//$2===5-1 comme ecrit dans le corps de la fonction si besoin.
+
+//lazy call
+//comme le call-name mais cette fois on a x=5-1
+//puis square(3)+square(x)
+//=>memorise les calculs afin de ne pas les dupliquer.
+//ilse peut que x=$2 en syntaxe need keyword.//
+function cons(_car,_cdr){
+    return {car: _car, cdr: _cdr};}
+function frozenCoins(){
+    const aFlip=(Math.random()>0.5)?'heads':'tails';
+    return cons(aFlip,frozenCoins);}
+let c=frozenCoins();
+let Tp=typeof(frozenCoins);
+console.log(c);
+function flipACoin2(c){
+    if(typeof(c.cdr)===Tp){ c.cdr=c.cdr(); return c;}
+    else return cons(c.car,flipACoin2(c.cdr));}
+let cc=flipACoin2(c);
+console.log(cc);
+console.log(typeof(cc.cdr)==='object');
+function flipACoin(c){
+    let pointer=c;
+    while(typeof(pointer.cdr)==='object'){
+	pointer=pointer.cdr;}
+    pointer.cdr=pointer.cdr();
+    return pointer;}//la liste de valeur .cdr congelee
+//===valeur issue du fait qu'on a decongele la partie congelee dans c.
+//pointer.cdr est une fonction il est congele le POINTER.CDR./////
+let ss0=frozenCoins();console.log(ss0);
+console.log(flipACoin(ss0));//ss0 en developpement vue que ss0.cdr frozen VALUE.
+let s11=flipACoin(ss0);
+console.log(s11);let s22=flipACoin(s11);
+console.log(s22);
+console.log(flipACoin(s22));
+/*function cv(l){
+    if(typeof(l.cdr)==='object') return [l.car];
+    else return [l.car].concat(cv(l.cdr));}
+function vc(t){
+    if(t.length===0) return frozenCoins;
+    else return cons(t[0],vc(t.slice(1)));}
+function cons2(l,tail){//l telque lelement congele devient tail
+    let t=cv(l);let k=t.length;
+    t[k]=tail.car;
+    return vc(t);}
+function flipACoinvf(c){
+let pointer=c;
+    while(typeof(pointer.cdr)==='object'){
+	pointer=pointer.cdr;}
+    pointer.cdr=pointer.cdr();
+    return cons2(c,pointer.cdr);}
+let ss00=frozenCoins();
+console.log("************");console.log(ss00);
+let ss1=flipACoinvf(ss00);console.log(ss1);
+console.log(flipACoinvf(ss1));*/
+function v2(s){
+    if(typeof(s.cdr)===typeof(frozenCoins)) return cons(s.car,s.cdr());
+    else return cons(s.car,v2(s.cdr));}
+let ss00=frozenCoins();
+console.log("************");console.log(ss00);
+let ss1=v2(ss00);console.log(ss1);
+console.log(v2(ss1));
+//là ca marche=>peu de complications typeof(s.cdr)===typeof(frozenCoins)..
+//car s.cdr son type peut tjrs etre un objet vue ue cest une liste
+//de meme types definies via un dictioJS donc a eviter.
+//avec cela on a permit la continuite.
+//details sur resume7.
+ss0=v2(ss1);console.log(ss0);
+console.log("*****************");
+//calcul de square d'un resultat facoriel sans pouvoir decongeler ce dernier
+function fznSquare(fzInt){
+    return ()=>Math.sqrt(fzInt());}//ainsi levaluation de vas pas calculer
+//fzInt() donc pas decongeler l'expression fact(??).
+let fzInt=()=>fact(10,1);
+let result=fznSquare(fzInt);
+console.log(result());
+console.log("********************");
+console.log("derniere chose sur les promesses ~ valeurs congelees.");
+const promise=new Promise(function(resolve,reject){
+    setTimeout(()=>resolve('hello'),2000);});
+let fgh=(t)=>Math.sqrt(t)-2;
+console.log(fgh(56));
+//console.log(promise);
+//permet d'afficher la promesse avant le parcours en dernier
+//via Promise{<Pending>}. ICI
+console.log(fgh(657));
+promise.then((value)=>{return value.toUpperCase();})
+.then((value)=>{console.log(value);});
+promise.then((value)=>{console.log(value);});
+promise.then((value)=>{console.log(value);});
+promise.then((value)=>{console.log(value);});
+//HELLO a la fin car se contente des le depart de faire ce qui est promis
+//jusqua la fin ou il y aura affichage avec derniere promesse indiquant
+//le mODIF puis affichage donc hello 3 fois puis HELLO a la fin.
+//reglage sur 2s 2000 ms.
+//dernier exemple promesse qui permet d'afficher fin du td si passage a la
+//derniere soit ligne PROMESSE 1seconde.
+const promise2=new Promise(function(resolve,reject){
+    setTimeout(()=>resolve("FIN TD8.//"),1000);});
+//ici, promesse soutenue.
+/*promise2.then((value)=>{console.log(value);});*/
+//affichage en ajoutant -- -- debut&fin
+promise2.then((value)=>{return "--"+value+"--";})
+    .then((value)=>{console.log(value);});//mise en commentaire 
+//ce que fera desormais malheureusement (explique avant pourquoi)
+//le fera cette ligne
+promise2.then((value)=>{console.log(value);});//affichage du voulu
+//la.((le compte tenu des promesses se fait par ordre decroissant)()/////
+//fin du cours sur LA PF_PART(7)!//.///
+//FIN
+//FIN.///

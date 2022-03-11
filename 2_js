@@ -1,0 +1,4 @@
+var a = "azert";
+var b = 12345;
+var tab = [1, 2, 3];
+console.log(tab);

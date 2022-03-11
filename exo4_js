@@ -1,0 +1,1057 @@
+//ss typage:>>
+//fonction stateDisp qui permet d'afficher un etat 
+//usage recommandé dans la qst3 ou il faut retourner la liste des cas 
+//possibles soit le futur de la grille codée par l'argument $1_functor__qst3
+//qui est letat courant soit en resume anti-abstraction la grille jouée
+//jusqu'a maintenant.
+function stateDisp1(s) {
+    return s;
+}
+function stateDisp2(s) {
+    console.log(s);
+    return;
+}
+//soit par retour soit par retour undefined & fais l'affichage
+//=>direct si on veut afficher listDisp2(s) au lieu de return
+//listDisp1(s) pour l'usage du premier en guise d'affichage de la grille..///
+//description de letat initial.
+//2 possibilites soit via retour fonctionnel soit en declaration const ..=.. ;
+//si la 2ieme const iS=.. ; <=> si on veut programmer le jeu on ne doit pas
+//modifier la valeur de iS ce qui est en suivi de la logique semantique
+//de type syntaxique du probleme vue que stateNexts permet la construction
+//de l'ensemble des potentielles grilles apres donc recuperation grille
+//selon un parametre => la grille de retour est independante de iS elle en est
+//pas une derivee vue notre self-construction juste a partir des données de la
+//premiere ..///
+var iS = ['', '', '', '', '', '', '', '', ''];
+//initialiseState via procede de declaration const.
+//((d'un type mutable => attention a la copie direct pseudo-copie donc
+//CAR SA modification induit directement une modification de l'anti-derivee
+//qui est le tableau string[] premier ..///))();///////
+//via fonction qui permet de retourner un tableau de types string[] en 
+//str vides ~.length==0,la taille peut etre donnee en parametre.
+//cette methode permet d'avoir iS en retour fonctionnel donc en premiere
+//remarque on peut eviter le caractere effets de bord d'une copie direct.
+//depilation=>adresse de manipulation remplace acces par donnée impossible.//
+function f(n) {
+    return (n === 0 && []) || [''].concat(f(n - 1));
+} //recursive.
+//exemple de declaration state in debut:
+var s0 = f(9);
+//tests:(listDisp1/2,affichage de iS,affichage DE s0)
+console.log(iS);
+console.log(s0);
+stateDisp2(iS);
+stateDisp2(s0);
+console.log(stateDisp1(iS));
+console.log(stateDisp1(s0));
+console.log("*******************************************");
+//tout est en fonctionnel seul fonction jusqu'à present douteuse f(n:number)
+//qui est en fonctionnel car ===:number[] (n===0 && []) ||[''].concat(f(n-1)).
+//qst2->sESlots:
+//necessite une fonction retournant l'index elements interieur state.
+/*function indext(e,t,n){//0 debut n (terminale)
+    return (t[0]===e && n) || indext(e,t.slice(1),n+1);}
+function sEslots(s){
+    return s.reduce((e,F)=>(F==='')?e.concat([indext(F,s,0)]):e,[]);}
+console.log(sEslots(iS));*/
+//probleme d'occurence car quand s[1]===s[2]===""
+//on concatene avec number[] contenant l'index de "" 2 fois
+//qui est 1 suivant le compris de indext(e,t,n=0).//
+function sEslots(s, m) {
+    if (s.length === 0)
+        return [];
+    else
+        return (s[0] === '') ? [m].concat(sEslots(s.slice(1), m + 1)) : sEslots(s.slice(1), m + 1);
+}
+console.log(sEslots(iS, 0));
+function index(e, t, n) {
+    if (t[0] === e)
+        return n;
+    else
+        return index(e, t.slice(1), n + 1);
+}
+function v2(s) {
+    return s.reduce(function (e, F) { if (F === "") {
+        e[0] = e[0] + 1;
+        return e.concat([e[0] - 1]);
+    }
+    else {
+        e[0] = e[0] + 1;
+        return e;
+    } }, [0]).slice(1);
+}
+console.log(index("", s0, 0), v2(s0));
+console.log("**************************************");
+function insert(s, j) {
+    //dans la position nn indiquee qui sera parmi v2(s)===sEslots(s)
+    //=>generalisation de la fonction par retour fonctionnel.
+    function insert2(n) {
+        s[n] = j;
+        return s;
+    }
+    return insert2;
+}
+//ou direct via return function(n){s[n]=j;return s;}
+//par map: return s.map((e)=>(index(e,s,0)===n)?e=j:e);
+function insert_vf(s, j) {
+    return function (n) {
+        var ee = 0;
+        return s.map(function (e) { if (ee === n) {
+            ee = ee + 1;
+            return j;
+        }
+        else {
+            ee = ee + 1;
+            return e;
+        } });
+    };
+}
+console.log(insert(iS, 'x')(0));
+console.log(iS);
+console.log(insert_vf(s0, 'o')(1));
+console.log(iS, s0); //avec CONST on a la garantie que ca
+//se modifiera jamais(2//)./// 
+//enfin presque cest au niveau du ??passage VALUE iS que ca reste constant
+//soit l'adresse car type mutable donc &iS qui ne se modifie pas
+//mais iS[j ??] peut se muter VALEUR ss que &iS===iS passage ??²JS 
+//ne se modifie car il se peut que la valeur iS se trouve
+//dans un espace libre d'adresse iS donc ca peut se modifier 
+//en abritant une nouvelle case memoire dans la meme adresse iS
+//=>iS reste constant apres modification de la valeur d'une de ses
+//elements string.
+//cest pour cela que j'avais insiste sur les effets de bord au debut
+//au niveau des fonctions qui retournent le futur d'un etat reclame
+//depuis la mise et l'etat precedent <<<<_functor||| courant.
+//on a fait 2 pour faire le choix entre modifier l'etat ou retourner
+//le nouveau etat<=>tableau independant du premier => l'acces au premier
+//n'est pas corrompu.
+function sNexts(s, j) {
+    console.log(v2(s));
+    var ss = v2(s);
+    var k = ss.length;
+    var f = function (t, l) { return insert_vf(t, j)(l); };
+    function g(n, h) {
+        if (h === k)
+            return [];
+        return [f(s, ss[h])].concat(g(n, h + 1));
+    }
+    return g(k, 0);
+}
+//en premier return f(s,ss[0])
+//puis f(s,ss[1])
+//cad. boucle sur i avec a chaque fois console.log(f(s,ss[i]));0<=i<=k;;///
+//en premier ss=v2(s) retourne l'indice des elements vides
+//puis k le cardinal de ce dernier
+//puis il faut faire une insertion dans tous les indices i compris
+//entre 0 et k-1 large des 2 cotes 
+//la fonction f prend t,l et retourne insert_vf(t,j)(l)
+//donc il faut faire f(t,l) pour les l allant de 0 à k-1===|v2(s)|-1
+//pour cela on implemente une fonction terminale
+//qui fait ca elle prend le n qui sera k $2:h=0 debutpuis 
+//si h===k ATTEINTE on retourne []
+//sinon on retourne f(t=s,l=ss[h]).concat(g(n,h+1));
+//puis on retourne COMME PREVU la valeur ::  g(k,0).
+//analyse effets de bord:
+//v2(s) est la liste des indices vides ss effets de bord car avec reduce
+//et insert_vf(t,l)(j)===function(n) retournant en {} un reducing aussi.
+//rq.:>>>  insert_vf prend $1=t $2=j ce qu'on va inserer 'x' ou 'o'
+//donc pas t,l car l est un ss[h] donc un v2(s)[h] donc un indice
+//il faut dire return ::  insert_vf(t,j)(l) et nn t,l puis j.
+//et apres pour appliquer f(s,ss[h])===insert_vf(s,j)(ss[h]) coherent.
+//insert_vf ou insert2 usage car pas effets de bord
+//&& v2(s) pour avoir les indices ss effets de bord ok!.///
+console.log("****************");
+console.log(sNexts(s0, 'x'));
+console.log(s0);
+//travail desormais avec s0 car iS apres insert(iS,'x')(0) a modifie iS[0]
+//donc LA VALEUR iS!!!
+//fait directement tjrs suivant usage v2(using index au lieu de
+//sEslots qui applique le reduce direct et insert_vf au lieu de insert,..2.
+//rq.:>>> ###2< << cest que lindice astucieux pour sEslots mais 
+//pour v2 nn car dedans index fonction recursive terminale.
+//sEslots(s,m)..là:::
+function v_qst3(s, j) {
+    var ss = sEslots(s, 0);
+    var k = ss.length;
+    function g(n, h) {
+        if (h === k)
+            return [];
+        else
+            return [insert_vf(s, j)(ss[h])].concat(g(n, h + 1));
+    }
+    return g(k, 0);
+}
+//ainsi toutes les fonctions sont en reduce ss effets de bord
+//avec tirage en 1 pas 2 fonction qst2.
+function vF(s, j) {
+    var ss = sEslots(s, 0);
+    var k = ss.length;
+    function insert_v(s, i) {
+        var ee = 0;
+        return s.map(function (e) {
+            if (ee === i) {
+                ee = ee + 1;
+                return j;
+            }
+            else {
+                ee = ee + 1;
+                return e;
+            }
+        });
+    }
+    function g(n, h) {
+        return (h === k) ? [] : [insert_v(s, ss[h])].concat(g(n, h + 1));
+    }
+    return g(k, 0);
+}
+iS[2] = 'o';
+console.log("**************");
+console.log(iS);
+console.log("1er:>>");
+console.log(sNexts(iS, 'x'));
+console.log("2ieme:>>");
+console.log(v_qst3(iS, 'x'));
+console.log("3ieme:>>");
+console.log(vF(iS, 'x'));
+console.log("fin presentation des 3 et debut qst4:>>>>>>><<");
+function tree(n, l) {
+    return [n, l];
+} //l est une liste d'abres
+//on a un arbre de racine n reliee a plusieurs arbres dans l.}
+function nbr_1(s, n) {
+    if (s.length === 0)
+        return n;
+    else
+        return (s[0] === 'x') ? nbr_1(s.slice(1), n + 1) : nbr_1(s.slice(1), n);
+}
+function nbr_2(s, n) {
+    if (s.length === 0)
+        return n;
+    else
+        return (s[0] === 'o') ? nbr_1(s.slice(1), n + 1) : nbr_1(s.slice(1), n);
+}
+function tree_prochain__1(s) {
+    //le 1er motif est une croix vue que j1 ecrit * dans la grille.//
+    var nbr = nbr_1(s, 0) - nbr_2(s, 0);
+    if (nbr > 0) { //tour du joueur 2
+        var s2 = vF(s, 'o');
+        return tree('o', s2);
+    }
+    if (nbr === 0)
+        return tree('x', vF(s, 'x'));
+}
+//on a choisi [n,l] au lieu de {n:n, l:l} car 
+//ici on a pas un noeud relie(enfin presque) a un sous-arbre definie ..par
+//sa racine mais un atypique n ('x' ou 'o') relie (racine!!!) 
+//a plusieurs possiblites soit une liste d'etats=>l comme prevu
+//sera une liste d'etats suivants===vF(s,n).
+//cette fonction ~effets de bord.....
+//s presentant un alignement vertical horizental diagonal
+//=>fin de la partie.
+//commencons par affiner la precedente en ajoutant $2==n.
+function tree_joueur(s, n) {
+    return tree(n, vF(s, n));
+}
+//implementation des 3:>>
+function eV(s) {
+    var e1 = 0;
+    var s1 = s.reduce(function (e, F) { if (e1 % 3 === 0) {
+        e1 = e1 + 1;
+        return e.concat([F]);
+    }
+    else {
+        e1 = e1 + 1;
+        return e;
+    } }, []); //tableau de la verticale 1 en elements.
+    e1 = 0;
+    var s2 = s.reduce(function (e, F) { if (e1 % 3 === 1) {
+        e1 = e1 + 1;
+        return e.concat([F]);
+    }
+    else {
+        e1 = e1 + 1;
+        return e;
+    } }, []); //verticale2
+    e1 = 0;
+    var s3 = s.reduce(function (e, F) { if (e1 % 3 === 2) {
+        e1 = e1 + 1;
+        return e.concat([F]);
+    }
+    else {
+        e1 = e1 + 1;
+        return e;
+    } }, []); //verticale3
+    if (s1[0] === s1[1] && s1[0] === s1[2])
+        return true;
+    if (s2[0] === s2[1] && s2[0] === s2[2])
+        return true;
+    if (s3[0] === s3[1] && s3[0] === s3[2])
+        return true;
+    return false;
+}
+function eH(s) {
+    var e1 = 0;
+    var s1 = s.reduce(function (e, F) { if (e1 < 3) {
+        e1 = e1 + 1;
+        return e.concat([F]);
+    }
+    else {
+        e1 = e1 + 1;
+        return e;
+    } }, []); //h1
+    e1 = 0;
+    var s2 = s.reduce(function (e, F) { if (e1 >= 3 && e1 < 6) {
+        e1 = e1 + 1;
+        return e.concat([F]);
+    }
+    else {
+        e1 = e1 + 1;
+        return e;
+    } }, []); //H2
+    e1 = 0;
+    var s3 = s.reduce(function (e, F) { if (e1 >= 6 && e1 < 9) {
+        e1 = e1 + 1;
+        return e.concat([F]);
+    }
+    else {
+        e1 = e1 + 1;
+        return e;
+    } }, []); //H 3.////
+    if (s1[0] === s1[1] && s1[0] === s1[2])
+        return true;
+    if (s2[0] === s2[1] && s2[0] === s2[2])
+        return true;
+    if (s3[0] === s3[1] && s3[0] === s3[2])
+        return true;
+    return false;
+}
+function eD(s) {
+    var s1 = [s[0]].concat([s[4]]);
+    var diag1 = s1.concat([s[8]]);
+    var s2 = [s[2]].concat([s[4]]);
+    var diag2 = s2.concat([s[6]]);
+    if (diag1[0] === diag1[1] && diag1[1] === diag1[2])
+        return true;
+    if (diag2[0] === diag2[1] && diag2[1] === diag2[2])
+        return true;
+    return false;
+}
+//on travaille avec tree_joueur(s,n) qui affiche n avec feuilles 
+//etats possibles.
+//tree_prochain__1(s) affiche l'arbre qui est tree_joueur(s,n)
+//avec n le prochain joueur est s l'etat courant.
+//utilise sNexts et n suivant nbr_1,nbr_2(j1*commence=>*debut tjrs)
+//tree_prochain__1(s) donne l'arbre de probabilite relatif aj==n.
+function stateDepth_0(s, j) {
+    var arbre1 = tree_joueur(s, j); //j relie a la liste des etats suivants
+    var arbre2_depth = [];
+    for (var i = 0; i < arbre1[1].length; i++) {
+        var si = arbre1[1][i];
+        console.log(si);
+        if (j === 'x') {
+            var a2i = tree_joueur(si, 'o')[1]; //liste
+            //etats depuis un etat fixe(apres joueur 'x' la proliferation depuis
+            //les etats fixes..///////)
+            //console.log("**");console.log(a2i);
+            arbre2_depth[i] = a2i;
+        }
+        else {
+            var a2i = tree_joueur(si, 'x')[1];
+            arbre2_depth[i] = a2i;
+        }
+    }
+    return [arbre1[1], arbre2_depth[0]];
+}
+//arbre2_depth qui sera fixe a letat 1 comme au debut
+//doit etre la liste des arbres possibles deduites soit a2i liste de tableaux
+//state_depth retourne la profondeur en niveau 1,2.
+console.log(iS);
+console.log(stateDepth_0(iS, 'x'));
+//plus simple cest mieux.
+function list(v, vv) {
+    return { head: v, tail: vv };
+}
+function tre(v, vv) {
+    return { node: v, child: vv };
+} //child est la liste d'abres
+function convert(t) {
+    if (t.length === 0)
+        return {};
+    else
+        return list(t[0], convert(t.slice(1)));
+}
+function sD(s, j) {
+    //ca va retourner une liste dont chacun des elements
+    //represente un etat de suivi apres insertion j.
+    var ss = vF(s, j); //tableaux des etats probables suivants.
+    var children = convert(ss);
+    var obj = tre(j, children); //children liste de meme type d'arbres.
+    //liste demarrant par la racine j et linkage avec 
+    //la liste des ss-nodes.
+    //obj devient l'arbre de profondeur donné pour le joueur j.
+    return obj;
+}
+console.log("-----***************************");
+console.log(iS);
+console.log("*********");
+console.log(sD(iS, 'o').child.tail.head);
+//on travaille desormais avec sD(s,j) retournant l'arbre d'ordre 1 
+//de profondeur de j depuis un etat de depart :s.
+console.log(iS);
+console.log("**************");
+function sdd(s, j) {
+    var ss = vF(s, j);
+    var n0 = ss[0]; //j< relie a ss[0] qui lui meme relie à..
+    //donc ..en.child.head=ss[0] puis en ../<<.|||tail={}
+    //donc linkage avec child qui est une liste de node ss tail.
+    var l0 = convert(ss.slice(1));
+    //doit retourner une liste(child) de head le 1er noeud et de tail
+    //la liste des prochains arbres
+    var t1 = tre(ss[0], {});
+    function cve(t) {
+        return tre(t, {});
+    }
+    function transfo(ts) {
+        //ts comme ss en liste de noeuds chaqun ss[i],nil
+        if (ts.length === 0)
+            return {};
+        else
+            return list(cve(ts[0]), transfo(ts.slice(1)));
+    }
+    return tre(j, transfo(ss));
+} //arbre demarrant par
+//../// 
+//en resume sdd prend s et j et retourne l'arbre de racine j
+//avec child liste d'abres ou chaque arbrei=cve(s[i]).
+function sD_total2(s, j) {
+    var ss = vF(s, j);
+    var children = convert(ss);
+    var obj = tre(j, children);
+    var k = ss.length;
+    var jj = '';
+    if (j === 'x')
+        jj = 'o';
+    else
+        jj = 'x';
+    var ens_trees = [];
+    for (var i = 0; i < k; i++) {
+        var ss1 = ss[i]; //etat probable donné par la mise de j.
+        //linkage avec l'arbres des possiblites ETATS.
+        var sss = sdd(ss1, jj); //arbre pour jj::.//
+        //!------devient une liste depuis ss1 vers les probas states.
+        ens_trees[i] = sss;
+    }
+    //l'arbre ~sss doit etre relie a ss1
+    //en format> ss1 est relie a sss.
+    //children puis head donne le node qui a aussi tail
+    //si tail.head!==nil donc cet arbre est relie a un autre ss-ss--ARBRE.
+    //l'arbre en fin correspond a tre(ss1,{head:sss,tail:nil});
+    //ens_trees correspond aux ss-arbres depuis j.
+    var rslt_a = convert(ens_trees); //tableau de trees en liste de trees.
+    var rslt = tre(j, rslt_a); //.child est la liste des ss-arbres
+    return rslt;
+}
+console.log(sD_total2(iS, 'x').child.head);
+console.log(sD_total2(iS, 'x').child.tail.head);
+console.log(sD_total2(iS, 'x').child.tail.tail);
+console.log(sdd(iS, 'x').child.head.child);
+//reformalisation de sdd
+function SD(s, j) {
+    //j linkage liste d'arbres ou chaqun exprime la proba en terme d'arbre
+    var ss = vF(s, j);
+    function cv(tt) {
+        return tre(tt, {});
+    }
+    //child sera la liste ou chaque head un node sans child
+    function cveee(t) {
+        if (t.length === 0)
+            return {};
+        else
+            return list(cv(t[0]), cveee(t.slice(1)));
+    }
+    return tre(j, cveee(ss));
+}
+console.log("*************");
+console.log(iS);
+console.log(SD(iS, 'x').node);
+console.log(SD(iS, 'x').child.head.node);
+console.log(SD(iS, 'x').child.head.child);
+console.log(SD(iS, 'x').child.tail.head.node);
+console.log(SD(iS, 'x').child.tail.head.child);
+//ainsi SD(s,j) retourne l'arbre depuis j vers tous les etats possibles.
+function suivi(s, j) {
+    function cv(tt) {
+        return tre(tt, {});
+    }
+    //child sera la liste ou chaque head un node sans child
+    function cveee(t) {
+        if (t.length === 0)
+            return {};
+        else
+            return list(cv(t[0]), cveee(t.slice(1)));
+    }
+    var tree1 = SD(s, j); //arbre de j vers les etats.
+    //letat i est egal à tree1.child.head.child qui est la liste des arbreslinkage
+    //donc on doit construire arbre de racine j
+    //ou linkage à child.head child.tail.head qui lui-meme linkage via
+    //.child=>j sera relié à un .child qui EST la liste des arbres
+    //donc chaqune est de type en .head node(..,///)
+    //    let tree2=tree1;
+    var jj = '';
+    if (j === 'x')
+        jj = 'o';
+    else
+        jj = 'x';
+    var ttt = [];
+    for (var i = 0; i < vF(s, j).length; i++) {
+        var etat1 = vF(s, j)[i];
+        var ss2 = vF(etat1, jj);
+        //ttt[0]=[etat1,ss2];}
+        //ttt en i rassemble letat i et ses resultats
+        var tree2 = tre(etat1, cveee(ss2));
+        ttt[i] = tree2;
+    }
+    return tre(j, convert(ttt));
+}
+console.log("*****");
+console.log(iS);
+console.log(suivi(iS, 'x'));
+console.log(suivi(iS, 'x').child.head);
+console.log(suivi(iS, 'x').child.head.child.head);
+console.log(suivi(iS, 'x').child.head.child.head.child);
+console.log(suivi(iS, 'x').child.tail.head);
+console.log(suivi(iS, 'x').child.tail.head.child.head);
+console.log(suivi(iS, 'x').child.tail.head.child.head.child);
+//SD(s,j) retourne l'arbre depuis j vers..
+//suivi(s,j) retourne l'arbre depuis vers..2
+//en recursif
+//il faut donc une fonction qui depuis un etat retourne l'arbre de racine cet
+//etat et de noeuds la liste des prochains potentiels etats.
+function TREE(s, j) {
+    var jj = '';
+    jj = (j === 'x') ? 'o' : 'x';
+    var tree2 = SD(s, j);
+    var racine = tree2.child.head.node;
+    var children = SD(racine, jj).child; //listes de noeuds
+    var tree3 = tre(racine, children);
+    return tree3;
+}
+console.log(TREE(iS, 'x'));
+console.log("<<<<le voilà!.;////");
+console.log(TREE(iS, 'x').child.head);
+console.log(TREE(iS, 'x').child.head.child);
+console.log(TREE(iS, 'x').child.tail.head);
+//TREE renvoie racine s et les racines seRONT les ss-arbres de letat suivant.
+//fonction qui prend un tableau d'etats ..
+function switch0(j) {
+    if (j === 'x') {
+        return 'o';
+    }
+    else {
+        return 'x';
+    }
+}
+function vc(l) {
+    if (l === {})
+        return [];
+    else
+        return [l.head].concat(vc(l.tail));
+}
+function Tend(s, j) {
+    return tre(s, SD(s, j).child);
+}
+//si s gagnant return {};
+//else sperdant donc affiche SD(s,jj);
+//Tend prend s et renvoie arbre de s avec les possiblites.
+function apply(ln, jj) {
+    //1er arbre ln.head => liste de head Tend(ln.head.node,jj)
+    if (ln === {})
+        return {};
+    else
+        return list(Tend(ln.head.node, jj), apply(ln.tail, jj));
+}
+function cvv(nnode) {
+    return nnode.node;
+}
+function aN0(node, j) {
+    if (eV(cvv(node)) || eH(cvv(node)) || eD(cvv(node)))
+        return node;
+    else {
+        var obj = tre(node, {});
+        obj.child = Tend(node, j).child;
+        return obj;
+    }
+}
+console.log(iS);
+console.log(aN0({ node: iS, child: {} }, 'x')); //problemes de eH,eV,eD...
+console.log("voir td8 versions2+ && typageAVEC..///.");
+console.log("***********************");
+console.log("***********************");
+function END(s, j) {
+    var ss = vF(s, j); //tableaux des etats suivants probables.
+    var k = ss.length; //tableau de tableaux
+    for (var i = 0; i < ss.length; i++) {
+        ss[i] = vF(ss[i], switch0(j));
+    }
+    return ss;
+}
+console.log(END(iS, 'x'));
+/*function endF(s,jj){
+    let t=END(s,jj);
+    for(let i=0;i<t.length;i++){
+    for(let j=0;j<t[i].length;j++){
+        t[i][j]=vF(t[i][j],jj);}}
+    return t;}
+console.log(endF(iS,'x')[0][0]);*/
+//prolongation TD9.
+console.log("***************************************");
+console.log("***************************************");
+console.log("***************************************");
+console.log("***************************************");
+function state0() {
+    var t = ['', '', '', '', '', '', '', '', ''];
+    return t;
+}
+; //state0 sous forme d'un tableau.
+function vides(s) {
+    var ee = 0;
+    return s.reduce(function (e, F) { if (F === '') {
+        ee = ee + 1;
+        return e.concat([ee - 1]);
+    }
+    else {
+        ee = ee + 1;
+        return e;
+    } }, []);
+}
+function dedans(s, j) {
+    return function (n) {
+        var ee = 0;
+        return s.map(function (e) { if (ee === n) {
+            ee = ee + 1;
+            return j;
+        }
+        else {
+            ee = ee + 1;
+            return e;
+        } });
+    };
+}
+function suivants(s, j) {
+    var vide = vides(s); //possibles indices du futur j dans s.
+    var insertion = dedans(s, j);
+    return vide.map(function (e) { return insertion(e); });
+}
+var zero = state0();
+zero[0] = 'x';
+zero[3] = 'o';
+console.log(zero);
+console.log(vides(zero));
+console.log(suivants(zero, 'x'));
+console.log(zero); //meme car modele de SANS effets de bord.
+function a1(t) {
+    if (t.length === 0)
+        return {};
+    else
+        return list(t[0], a1(t.slice(1)));
+}
+function a0(t) {
+    return tre(t, {});
+}
+function to(s, j) {
+    var suivi = suivants(s, j);
+    var new0 = suivi.map(function (e) { return a0(e); }); //tableau de nodes.
+    var newF = a1(new0); //tt est en fonctionnel.///();//////
+    //newF est la liste bien DIT des nodes.
+    //on retourne tre de racine j et de child la liste des nodes
+    //soit en $2===newF.
+    return tre(j, newF);
+}
+console.log("TEST(s):>>(); ------------------------");
+console.log(to(zero, 'x').node);
+console.log(to(zero, 'x').child.head.node);
+console.log(to(zero, 'x').child.head.child);
+console.log(to(zero, 'x').child.tail.head.node);
+console.log(to(zero, 'x').child.tail.head.child);
+console.log(to(zero, 'x').child.tail.tail.tail.tail.tail.tail.head.node);
+console.log(to(zero, 'x').child.tail.tail.tail.tail.tail.tail.tail);
+console.log("TEST(s):>>(); ------------------------");
+function too(s, j) {
+    var jj = '';
+    jj = (j === 'x') ? 'o' : 'x';
+    var to1 = to(s, j);
+    var prob1 = to(s, j).child.head.node;
+    var probs = suivants(prob1, jj);
+    var probs2 = probs.map(function (e) { return a0(e); });
+    var probs3 = a1(probs2);
+    var to2 = to1;
+    to2.child.head.child = probs3;
+    return to2;
+}
+console.log(too(zero, 'x').node);
+console.log(too(zero, 'x').child.head.node);
+//console.log(too(zero,'x').child.head.child);
+console.log(too(zero, 'x').child.tail.head.node);
+console.log(too(zero, 'x').child.tail.head.child);
+console.log(too(zero, 'x').child.tail.tail.tail.tail.tail.tail.head.node);
+console.log(too(zero, 'x').child.tail.tail.tail.tail.tail.tail.tail);
+console.log("now testing if adding .child.head.child has been succeed;::>");
+//.child.head.child est different de nil now.
+//ss effets debord BIEN SUR!
+var Tf0 = too(zero, 'x').child.head; //le 1er fils qui est cense avoir tous
+//les ss-fils de probas suivants.
+console.log(Tf0.node);
+console.log(Tf0.child.head.node);
+console.log(Tf0.child.head.child);
+console.log(Tf0.child.tail.head.node);
+console.log(Tf0.child.tail.head.child);
+console.log(Tf0.child.tail.tail.tail.tail.tail.head.node);
+console.log(Tf0.child.tail.tail.tail.tail.tail.tail);
+console.log("TEST(s):>>(); ------------------------");
+console.log("TEST(s):>>(); ------------------------");
+function to_arrayyy(l) {
+    //liste de nodes l.head est un {node,child} et l.tail est la suite
+    //donc {head:{node,child},tail:}
+    //si l.tail==={} comme compris en entree l.head n'existe pas
+    //donc au lieu d'avoir {node,child} on aura {}.
+    if (l.head === undefined || l.head.node === undefined)
+        return [];
+    else
+        return [l.head].concat(to_arrayyy(l.tail));
+}
+//l.tail est {head:{},tail:{}}<=>vide en specificite: l.head==={}.
+//de mieux en mieux !!!||||| l.tail a un head de tre nil et child nil
+//et puis un tail nil ==={{},{}}.
+//cest tordu => passage par length.
+//ou bien l==={} cad. liste avec aucun node => 
+//l.head ===undefined ou bien l.head.node===undefined 
+//si l'un deux est juste donc il y a pas de node dans ce debut de ss-liste
+//donc elle est vide.
+//now, ca a l'air de marcher.
+function c10(f, l) {
+    var arr = to_arrayyy(l);
+    var arr2 = arr.map(function (e) { return f(e); });
+    return a1(arr2);
+}
+function c20(ts) {
+    var ts1 = ts.map(function (e) { return a0(e); });
+    return a1(ts1);
+} //liste d'arbres depuis tableau d'etats.
+function c30(e) {
+    return function (j) {
+        var t1 = suivants(e.node, j);
+        var t2 = c20(t1);
+        e.child = t2;
+        return e;
+    };
+}
+function tooo(s, j) {
+    var jj = '';
+    jj = (j === 'x') ? 'o' : 'x';
+    var tree1 = to(s, j);
+    var child1 = tree1.child;
+    var tree2 = c10(function (e) { return c30(e)(jj); }, child1);
+    tree1.child = tree2;
+    return tree1;
+}
+console.log(zero);
+console.log(tooo(zero, 'x').node); //ca sera x.
+console.log(tooo(zero, 'x').child.head.node); //la 1er state apres mise de j==='x'
+console.log(tooo(zero, 'x').child.tail.head.node); //2ieme state meme chose.
+//explorons les fils de tooo(zero,'x').child.head
+var tyz = tooo(zero, 'x').child.head; //en .node le 1er en .child les
+//sous-probas induits.
+console.log("etude 1er sous-fils:>>>");
+console.log(tooo(zero, 'x').child.head.node);
+console.log(tyz.child.head.node);
+console.log(tyz.child.tail.head.node);
+console.log(tyz.child.tail.tail.head.node);
+console.log(tyz.child.tail.tail.tail.head.node);
+console.log(tyz.child.tail.tail.tail.tail.head.node);
+console.log(tyz.child.tail.tail.tail.tail.tail.head.node);
+console.log(tyz.child.tail.tail.tail.tail.tail.tail);
+var tyz2 = tooo(zero, 'x').child.tail.head;
+console.log("etude 2ieme sous-fils:>>>");
+console.log(tooo(zero, 'x').child.tail.head.node);
+console.log(tyz2.child.head.node);
+console.log(tyz2.child.tail.head.node);
+console.log(tyz2.child.tail.tail.head.node);
+console.log(tyz2.child.tail.tail.tail.head.node);
+console.log(tyz2.child.tail.tail.tail.tail.head.node);
+console.log(tyz2.child.tail.tail.tail.tail.tail.head.node);
+console.log(tyz2.child.tail.tail.tail.tail.tail.tail);
+//preuve de terminaison pour les fils de j==='x'.
+console.log(tooo(zero, 'x').child.tail.tail.tail.tail.tail.tail.head.node);
+console.log(tooo(zero, 'x').child.tail.tail.tail.tail.tail.tail.tail);
+console.log("dernier fils:>>>>");
+var tyzE = tooo(zero, 'x').child.tail.tail.tail.tail.tail.tail.head;
+console.log(tyzE.child.head.node);
+console.log(tyzE.child.tail.head.node);
+console.log(tyzE.child.tail.tail.head.node);
+console.log(tyzE.child.tail.tail.tail.head.node);
+console.log(tyzE.child.tail.tail.tail.tail.head.node);
+console.log(tyzE.child.tail.tail.tail.tail.tail.head.node);
+console.log(tyzE.child.tail.tail.tail.tail.tail.tail);
+//tt est PARFAIT.///
+console.log("*************************************");
+console.log("*************************************");
+var zzz1 = ['x', '', '', 'x', '', '', 'x', '', ''];
+var zzz2 = ['x', 'x', 'x', '', '', '', '', '', ''];
+var zzz3 = ['x', '', '', '', 'x', '', '', '', 'x'];
+console.log(eV1(zzz1), eH1(zzz2), eD1(zzz3), eH(zero), eH1(zero)); //car '' egalite.
+function eV1(s) {
+    var e1 = 0;
+    var s1 = s.reduce(function (e, F) { if (e1 % 3 === 0) {
+        e1 = e1 + 1;
+        return e.concat([F]);
+    }
+    else {
+        e1 = e1 + 1;
+        return e;
+    } }, []); //tableau de la verticale 1 en elements.
+    e1 = 0;
+    var s2 = s.reduce(function (e, F) { if (e1 % 3 === 1) {
+        e1 = e1 + 1;
+        return e.concat([F]);
+    }
+    else {
+        e1 = e1 + 1;
+        return e;
+    } }, []); //verticale2
+    e1 = 0;
+    var s3 = s.reduce(function (e, F) { if (e1 % 3 === 2) {
+        e1 = e1 + 1;
+        return e.concat([F]);
+    }
+    else {
+        e1 = e1 + 1;
+        return e;
+    } }, []); //verticale3
+    if (s1[0] === s1[1] && s1[0] === s1[2] && s1[0] !== '')
+        return true;
+    if (s2[0] === s2[1] && s2[0] === s2[2] && s2[0] !== '')
+        return true;
+    if (s3[0] === s3[1] && s3[0] === s3[2] && s3[0] !== '')
+        return true;
+    return false;
+}
+function eH1(s) {
+    var e1 = 0;
+    var s1 = s.reduce(function (e, F) { if (e1 < 3) {
+        e1 = e1 + 1;
+        return e.concat([F]);
+    }
+    else {
+        e1 = e1 + 1;
+        return e;
+    } }, []); //h1
+    e1 = 0;
+    var s2 = s.reduce(function (e, F) { if (e1 >= 3 && e1 < 6) {
+        e1 = e1 + 1;
+        return e.concat([F]);
+    }
+    else {
+        e1 = e1 + 1;
+        return e;
+    } }, []); //H2
+    e1 = 0;
+    var s3 = s.reduce(function (e, F) { if (e1 >= 6 && e1 < 9) {
+        e1 = e1 + 1;
+        return e.concat([F]);
+    }
+    else {
+        e1 = e1 + 1;
+        return e;
+    } }, []); //H 3.////
+    if (s1[0] === s1[1] && s1[0] === s1[2] && s1[0] !== '')
+        return true;
+    if (s2[0] === s2[1] && s2[0] === s2[2] && s2[0] !== '')
+        return true;
+    if (s3[0] === s3[1] && s3[0] === s3[2] && s3[0] !== '')
+        return true;
+    return false;
+}
+function eD1(s) {
+    var s1 = [s[0]].concat([s[4]]);
+    var diag1 = s1.concat([s[8]]);
+    var s2 = [s[2]].concat([s[4]]);
+    var diag2 = s2.concat([s[6]]);
+    if (diag1[0] === diag1[1] && diag1[1] === diag1[2] && diag1[0] !== '')
+        return true;
+    if (diag2[0] === diag2[1] && diag2[1] === diag2[2] && diag2[0] !== '')
+        return true;
+    return false;
+}
+function switch_end(j) {
+    var jj = '';
+    jj = (j === 'x') ? 'o' : 'x';
+    return jj;
+}
+function lenT(tree) {
+    var tree2 = tree; //independante de tree.
+    function lent(treee, n) {
+        if (treee.child.head === undefined)
+            return n;
+        else
+            return lent(treee.child.head, n + 1);
+    }
+    return lent(tree2, 0);
+}
+console.log("***********");
+console.log(lenT(to(zero, 'x')), lenT(tooo(zero, 'x')));
+function completude(tree, j) {
+    var tree1 = tree;
+    var child1 = tree1.child;
+    var tree2 = c10(function (e) { return c30(e)(j); }, child1);
+    tree1.child = tree2;
+    return tree1;
+}
+var txyz = to(zero, 'x');
+var afe1 = completude(txyz, 'o');
+console.log(zero);
+console.log(afe1.node);
+console.log(afe1.child.head.node);
+console.log(afe1.child.head.child.head.node);
+console.log(afe1.child.head.child.head.child);
+console.log("********************************************");
+console.log("********************************************");
+console.log("********************************************");
+console.log("********************************************");
+console.log("********************************************");
+/*
+function leaf(tree){//tableau des feuilles qui sont des nodes.
+    function leaf2(t2){//depuis child recupere la plus profonde""
+//feuille tout a gauche;
+    //t2 sera tree.child
+    let t3=t2;
+    if(t3.head===undefined) return t3;
+    else return leaf2(t2.head.child);}
+    let t4=leaf2(tree);//la plus profonde"" feuille.
+    let len1=lenT(tree);
+//si 1 donc la feuille est direct: .child.head
+*/
+function application(tt, j) {
+    if (tt.head === undefined)
+        return []; //tt.child.head est un fils.
+    //<=>encore un fils a traiter.
+    else {
+        var tt1 = tt.head.child; //recuperer le child des sous-fils
+        //en .head.child.
+        //now: tt1 est une liste de nodes ss-fils donc c30 oui.
+        var z = c10(function (e) { return c30(e)(j); }, tt1);
+        //tt1 qui est la liste des sous-fils avec z chaque sous-fils est developpe.
+        return [z].concat(application(tt.tail, j));
+    }
+}
+/*function w(tt,j){//developpement d'un arbre de profondeur2.()///
+    let child1=tt.child;//j est la prochaine mise 'x' exemple//.///
+    let lt=c10((e)=>c30(,child1);*/
+var nbv = tooo(zero, 'x');
+var nbvv = application(nbv.child, 'x');
+console.log(nbvv[0].head.node);
+console.log(nbvv[0].head.child.head.node);
+console.log(nbvv[0].head.child.head.child);
+console.log(nbvv[0].head.child.tail.head.node);
+console.log(nbvv[0].head.child.tail.tail.head.node);
+console.log(nbvv[0].head.child.tail.tail.tail.head.node);
+console.log(nbvv[0].head.child.tail.tail.tail.tail.head.node);
+console.log(nbvv[0].head.child.tail.tail.tail.tail.tail);
+function end_to(s, j) {
+    var tree0 = tooo(s, j);
+    var child0 = application(tree0.child, j);
+    var rslt = [];
+    //tableau ou chaque element est une liste d'arbres contenant le ss-fils
+    //en .head.node et en .head.child la liste des sous-fils qui lui ont 
+    //attachés. i.e. child[0] est de type child {head:type<node>,tail}
+    //en .head le ss-fils principal accessible en .node
+    //et en .head.child la liste des ss-ss-fils accessibles
+    //par exemple VIA .head.node / <<.head.child.tail.head.node
+    //le 3ieme ss-ss-fils en .head.child.tail.tail.head.node ainsi de suite.
+    //maintenant il faut que chaque tree0.child ses fils 
+    //deviendront ce qu'on a dans child0.
+    var i = 0;
+    var tree1 = tree0.child; //liste des fils
+    while (tree1.head !== undefined) { //1er fils existant
+        var tree2 = tree1.head.child; //liste des ss-fils du 1er fils.
+        var childn = c10(function (e) { return c30(e)(j); }, tree2);
+        //tree1.head.child=childn;
+        rslt[i] = [childn];
+        i++; //fils et ss-fils developpes.
+        tree1 = tree1.tail;
+    }
+    return rslt;
+}
+var nbx = end_to(zero, 'x');
+var nbx0 = nbx[0][0]; //fils et ss-fils developpes
+console.log(nbx0.head.node);
+var nbz = nbx0.head.child;
+console.log(nbz.head.node);
+console.log(nbz.tail.head.node);
+console.log(nbz.tail.tail.head.node);
+console.log(nbz.tail.tail.tail.head.node);
+console.log(nbz.tail.tail.tail.tail.head.node);
+console.log(nbz.tail.tail.tail.tail.tail);
+function end_to2(s, j) {
+    var tree0 = tooo(s, j);
+    var rslt = [];
+    function developper(tt, i) {
+        if (tt.head === undefined)
+            return rslt;
+        else {
+            //1er fils existant;i=0 debut..///
+            var tree2 = tt.head.child; //liste des ss-fils du 1er fils.
+            var childn = c10(function (e) { return c30(e)(j); }, tree2);
+            //tree1.head.child=childn;
+            rslt[i] = [childn]; //fils et ss-fils developpes.
+            return developper(tt.tail, i + 1);
+        }
+    }
+    return developper(tree0.child, 0);
+}
+console.log("procedure recursive terminale:>>>");
+var nbx2 = end_to2(zero, 'x');
+var nbx02 = nbx2[0][0]; //fils et ss-fils developpes
+console.log(nbx02.head.node);
+var nbz2 = nbx02.head.child;
+console.log(nbz2.head.node);
+console.log(nbz2.tail.head.node);
+console.log(nbz2.tail.tail.head.node);
+console.log(nbz2.tail.tail.tail.head.node);
+console.log(nbz2.tail.tail.tail.tail.head.node);
+console.log(nbz2.tail.tail.tail.tail.tail);
+//function capt(tt,n){//capter chaque ss-element qui represente la liste
+//ss-fils+developpement n est le numero du ss-fils;
+//let ttt=tt[n][0];//liste d'arbres representant le ss-arbre ss-fils
+//a la racine et feuilles les probas induites.
+//ca capte tous les ss-fils donc tt[n][0] 6 ss-fils pour chaque fils.
+//on doit creer une liste ..}
+console.log("***************************");
+/*function fendz(s,j){
+    let tree0=tooo(s,j);//e prochain est un element de child soit un arbre
+//avec son node le fils et son child les fils de ce dernier.
+    function p(fils){
+    let ss_fils=fils;
+    let endd=c10((e)=>{e.child=tooo(e.node,j); return e;},ss_fils);
+    fils.child=endd;
+    return fils;}
+    let new_fils= p(tree0.child);
+    tree0.child=new_fils;
+    return tree0;}
+let gp00=fendz(zero,'x');
+console.log(gp00.node);
+console.log(gp00.child.head.node);
+console.log(gp00.child.head.child.head.node);*/
+function fendz(s, j) {
+    var tree0 = to(s, j);
+    var child0 = tree0.child;
+    var f = function (e) { e.child = to(e.node, switch_end(j)); return e; };
+    var childn = c10(f, child0);
+    tree0.child = childn;
+    return tree0;
+}
+var gp00 = fendz(zero, 'x');
+console.log(gp00.node);
+console.log(gp00.child.head.node);
+console.log("la fonction tooo(s,j) fera l'affaire.//");
+console.log("fin TD8./////");

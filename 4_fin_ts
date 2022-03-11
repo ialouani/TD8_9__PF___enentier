@@ -1,0 +1,62 @@
+interface Plus {kind: "op_plus";}
+interface Equal {kind: "op_equal";}
+interface Mult {kind: "op_mult";}
+//representent les contrats de toutes les classes pour chaque interface
+//presentant un modele d'addition,multiplication,test d'egalite
+//suivant la signature du champ kind qui tranche en les sur-classant en 
+//trois comme precisé avant en terme de classes representatives.
+interface Value{
+    kind:string;
+    val;}
+type Op=Plus | Equal | Mult;
+function op_apply_int(lval: Value, rval: Value, f):Value{
+    return {kind: "val_int", val: f(lval.val,rval.val)};}
+function op_apply(lval: Value, op: Op, rval:Value):Value{
+    switch(op.kind){
+    case "op_equal": return {kind:"val_bool",val:lval.val===rval.val};
+    case "op_plus": return op_apply_int(lval,rval,(u,v)=>u+v);
+    case "op_mult": return op_apply_int(lval,rval,(u,v)=>u*v);
+    }
+}
+class add implements Plus{
+    kind: "op_plus";
+    genre: "adding 2 numbers";}
+class multipl implements Mult{
+    kind: "op_mult";
+    genre: "number*number2";}
+class equalto implements Equal{
+    kind: "op_equal";
+    genre:"test d'egalite";}
+class nbr implements Value{
+    kind: "number";
+    val;
+    constructor(l: number){
+	this.val=l;}}
+let nbr1=new nbr(12);
+let nbr2=new nbr(8);
+//il faut que lval et rval soit de type Value donc directement 
+//construction depuis Value
+class n1 implements Value{
+    kind: "number";
+    val:12;}
+class n2 implements Value{
+    kind: "number";
+    val:8;}
+//manuellement via type=..~variable:TYPE=valeur_demandée..///
+const m1:Value={kind:"number",val:12};
+const m2:Value={kind:"number",val:8};//pop=>les objets sont des classes
+//en mode objets prototypes => interface definit les types d'objets en POP.
+//const addition:Op={kind: "op_plus", genre:"adding"};
+//faux car là on cree pas des classes on considere une valeur d'un type
+//comme une structure en C donc on se limite aux champs existants 
+//en interface type objet UNIQUEMENT!!!
+const addition:Op={kind:"op_plus"};
+console.log(op_apply(m1,addition,m2));
+const multi:Op={kind:"op_mult"};
+const equalb:Op={kind: "op_equal"};
+const m3:Value={kind:"number", val: 12};
+console.log(op_apply(m1,multi,m3));
+console.log(op_apply(m1,equalb,m2));
+console.log(op_apply(m1,equalb,m3));
+//voilà.
+

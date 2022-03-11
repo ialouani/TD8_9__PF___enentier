@@ -1,0 +1,22 @@
+function test(c,d){return c===d;}
+function three(n,m,op){
+    if(typeof(op)===typeof(test)) return (n1,m1)=>op(n1,m1);
+    if(op["func"](n,m)===n+m) return three(n,m,(u,v)=>u+v);
+    if(op["func"](n,m)===n*m) return three(n,m,(u,v)=>u*v);
+    if(op["func"](n,m)===(n===m)) return three(n,m,(u,v)=>u===v);}
+let op1={"func":(a,b)=>a+b};
+let op2={"func":(a,b)=>a*b};
+let op3={"func":(a,b)=>a===b};
+//fonctions add,mult,equal__to en definition objet FONCTION.
+//recuperation via une seule fonction des fonctions consistantes.
+//$1,$2 sont des parametres spectateurs.
+//tel que $1+$2!==$1*$2 1,0 par exemple (pris CAR 0 est neutre pour l'addition
+//donc n*0=0 pour tt n car lensemble des n est un anneau commutatif en *)
+//pour add on prend 1,0 et $3=op1.
+//pour mult on prend 1,1 car 1 est neutre pour * nn pas +.
+let add=three(0,1,op1);
+let mult=three(1,1,op2);
+let equal=three(1,2,op3);
+console.log(add(43,21));
+console.log(mult(2,7));
+console.log(equal(342,3412));console.log(equal(3412,3412));

@@ -1,0 +1,146 @@
+//sans typage:
+function map(t, f) {
+    if (t.length === 0)
+        return [];
+    else
+        return [f(t[0])].concat(map(t.slice(1), f));
+}
+var t1 = [1, 2, 3];
+console.log(map(t1, function (x) { return x - 1; }));
+var _ = require("underscore");
+console.log(_.map(t1, function (x) { return x - 1; }));
+console.log(t1.map(function (x) { return x - 1; }));
+var db = [
+    { name: "Thales", birth: -625, death: -547 },
+    { name: "Anaximandre", birth: -600, death: -546 },
+    { name: "Heraclite", birth: -544, death: -480 }
+];
+function reduce(t, f, acc) {
+    if (t.length === 0)
+        return acc;
+    else
+        return reduce(t.slice(1), f, f(acc, t[0]));
+}
+//application pour somme d'elements de tableaux.
+var t2 = [2, 4, 7];
+console.log(reduce(t2, function (e, F) { return e + F; }, 0));
+console.log(_.reduce(t2, function (e, F) { return e + F; }, 0));
+console.log(t2.reduce(function (e, F) { return e + F; }, 0));
+function cmp(str1, str2) {
+    //devant la position de str2;
+    return str1[0].charCodeAt(str1[0]) <= str2[0].charCodeAt(str2[0]);
+}
+function dp(t_o) {
+    return t_o.reduce(function (e, F) { return (cmp(e.name, F.name)) ? e : F; }, t_o[0]);
+}
+console.log(dp(db)); //marche ca recupere le dictionnaire en premier /à 
+//nom dans l'odre alphabetique.
+//<= pour gerer le retour de e===t_o[0] puis comparaison suivante de avec
+//t_o[0] car reduce parcourt depuis 0 acc pas le choix t_o[1]
+//et là on demarre la vraie comparaison et vue () que    les noms
+//premiere lettre tous differente entre eux donc classement reussi 
+//de puissance dite~ relative.
+//using cmp pour ne pas encombrer
+//sinon (e,F)=>(e.name[0].charCodeAt(e.name[0])<
+//=   f.name[0] .charCodeAt(f.name[0]))?e:F.
+//<= permet de demarrer en stade 2 la comparaison du premier avec le 2ieme
+//sinon < retournera t_o[0] puis comparaison avec t_o[1] le suivant 
+//<=>memechose.////
+function copie(t) {
+    if (t.length === 0)
+        return [];
+    else
+        return [t[0]].concat(copie(t.slice(1)));
+}
+function delete2(n, t) {
+    if (t.length === 1)
+        return [];
+    else
+        return (t[0] !== n && [t[0]].concat(delete2(n, t.slice(1)))) || t.slice(1);
+}
+function ts(t_o) {
+    var t_o2 = copie(t_o);
+    return t_o.map(function (d) { d = dp(t_o2); t_o2 = delete2(d, t_o2); return d; });
+}
+var ta = [2, 1, 121];
+console.log(copie(ta));
+console.log(delete2(1, ta));
+var copie2 = function (t) { return t.reduce(function (e, F) { return e.concat([F]); }, []); };
+var delete4 = function (n, t) { return t.reduce(function (e, F) { return (F === n) ? e : e.concat([F]); }, []); };
+console.log(copie2([2, 1, 121]));
+console.log(delete4(1, [2, 1, 121]));
+console.log("************************");
+console.log(ts(db));
+var ts_v2 = function (o) {
+    var o_2 = copie2(o);
+    return o.map(function (d) { d = dp(o_2); o_2 = delete4(d, o_2); return d; });
+};
+console.log(ts_v2(db));
+console.log("*****************1ere methode:liste_noms===tableau de personnes");
+//si le retour est le tableau en sort sans mentionner les autres infos.
+var ts_v5 = function (o) {
+    var oo = copie2(o);
+    return o.map(function (d) {
+        var dd = { name: dp(oo).name };
+        oo = delete4(dp(oo), oo);
+        return dd;
+    });
+};
+console.log(ts_v5(db));
+var ts_vf = function (o) { return _.map(ts_v5(o), function (d) { return d.name; }); };
+console.log(ts_vf(db));
+console.log("******les 2 methodes de ss infos et carrement elements noms_values");
+console.log("******************************AVEC TYPAGE adoptant rapidite une:");
+function cmp_t(s, ss) {
+    return s.charCodeAt(0) <= ss.charCodeAt(0);
+}
+function copie_t(t) {
+    return t.reduce(function (e, F) { return e.concat([F]); }, []);
+}
+function delete_t(n, t) {
+    return t.reduce(function (e, F) { return (F === n) ? e : e.concat([F]); }, []);
+}
+function dp_t(t) {
+    return t.reduce(function (e, F) { return (cmp_t(e.name, F.name)) ? e : F; }, t[0]);
+}
+function ts_t(t) {
+    var tt = copie_t(t);
+    return t.map(function (d) {
+        var dd = dp_t(tt).name;
+        tt = delete_t(dp_t(tt), tt);
+        return dd;
+    });
+}
+var db_t = [{ name: "Thales", birth: -625, death: -547 },
+    { name: "Anaximandre", birth: -600, death: -546 },
+    { name: "Heraclite", birth: -544, death: -480 }];
+console.log(ts_t(db_t));
+console.log("qst2: objet personne nee le plus tot chronologiquement:>>");
+function person(t) {
+    return t.reduce(function (e, F) { return (e.birth <= F.birth) ? e : F; }, t[0]);
+}
+console.log(person(db_t));
+var person2 = function (o) { return o.reduce(function (e, F) { return (e.birth <= F.birth) ? e : F; }, o[0]); };
+console.log(person2(db_t));
+console.log("******************************duree de vie la plus longue:>>");
+function longV(t) {
+    var o = t.reduce(function (e, F) {
+        var n1 = e.death - e.birth;
+        var n2 = F.death - F.birth;
+        return (n1 <= n2) ? F : e;
+    }, t[0]);
+    return o.death - o.birth;
+}
+console.log(longV(db_t));
+console.log("derniere question (4):>>");
+function ps(t) {
+    var to2 = t.reduce(function (e, F) { return ((F.death - F.birth) % 2 === 0) ? e.concat([F]) : e; }, []);
+    return to2;
+}
+var db_t2 = [{ name: "Thales", birth: -625, death: -547 },
+    { name: "Anaximandre2", birth: -600, death: -547 },
+    { name: "Heraclite", birth: -544, death: -480 }];
+console.log(ps(db_t));
+console.log(ps(db_t2));
+console.log("fin de l'exo3 typages fonctions that use map-reduce");
+console.log("FIN EXO3./////");

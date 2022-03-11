@@ -1,0 +1,6 @@
+const _=require("ramda");
+//console.log(_);
+console.log(_.zip([1,2])(["2","4"]));
+let f=_.map((e)=>e*2);
+console.log(f([0,3]));
+console.log(_.map((e)=>Math.pow(e,3))([3,4]));

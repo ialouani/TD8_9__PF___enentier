@@ -1,0 +1,68 @@
+let obj:{age: number, name: string}={age: 123, name: "AZA"};
+console.log(obj);
+interface Serializable{
+    serialize():string;}
+class Customer implements Serializable{
+    firstName: string;
+    serialize(){
+	return this.firstName;}}
+const obj2=new Customer();
+obj2.firstName="aza";
+console.log(obj2);
+console.log(obj2.serialize());
+//interface definissant la classe book d'ou va deriver des instances
+//qui sont des books avec des choses predifines.
+//interface book qui sera ~~~le type exprimant la classe book
+//=>signature de la classe book via l'abstraction par interface book.
+interface ens_pages{
+    //generalisations de la classe book
+//=>modele en TYPAGE par contenu et types des valeurs parties ||contenu-../////
+    name: string;
+    f(a:string):string;}
+//ce modele prototype peut generaliser le book en plusieurs types
+//de bouquins mais tjrs se referant a la meme chose cad.
+//ensemble de pages ayant un nom et une fonction qui ressort ce nom ou
+//un string specifique en general. 
+class book implements ens_pages{
+    name: string;
+    f(a:string){return a+this.name;}}//exemple de voila ..///
+let obj1=new book();
+obj1.name="aza";
+console.log(obj1.f);//[Function: (anonymous)].
+console.log(obj1.f("voila "));
+class livre implements ens_pages{
+    nbr: number;
+    name: string;
+    f(){return this.name + " a " + this.nbr;}}
+let obj3=new livre();
+obj3.nbr=12;obj3.name="azz";
+console.log(obj3);
+console.log(obj3.f());
+interface person{
+    age: number;}
+class grand implements person{
+    age: number;
+    age0(){ return this.age-19;}}
+const obj5=new grand();
+obj5.age=23;
+console.log(obj5,obj5.age0());
+class number2{
+    value;value_2;//declaration dite naïve
+    constructor(a){//puis en new number2 le $1 sera passe 
+//a celle-ci pour instancier un objet manipulé desormais en this.
+	this.value=a;
+	this.value_2=a*2;}}
+let nombre1=new number2(12);
+console.log(nombre1);
+console.log("************************");
+class Product{
+    name: string;
+    price: number;
+}
+interface produits_infos{
+    (product:Product):number;}
+function pric(product:Product):number{return product.price;}
+let price:produits_infos=pric;
+let obj20=new Product();obj20.price=1232;
+console.log(price(obj20));
+console.log("************************");

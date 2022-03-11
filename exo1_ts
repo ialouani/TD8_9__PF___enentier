@@ -1,0 +1,79 @@
+function mP(x:number):number{
+    return 3*Math.pow(x,2)+4.7;}
+const mP2:(number)=>number=(x:number)=>3*Math.pow(x,2)+4.7;
+console.log(mP(1.2),mP2(1.2));
+console.log("*************");
+function dA(f,h){//calcul de derivée d'une fonction f avec une erreur h
+    return function(x){
+	return (f(x+h)-f(x-h))/(2*h);};}
+function dA_n(f,h,n){//derivée n-ième
+//n>=1 juste pour l'arret sur f'.
+    if(n===1) return dA(f,h);
+    else return dA_n(dA(f,h),h,n-1);}
+let f1=(x)=>Math.cos(x);
+let f2=(x)=>Math.sin(x);
+let dcos=dA(f1,0.0001);
+let dsin=dA(f2,0.0001);
+//cos'(0)===-sin(0)===0.
+//sin'(0)===cos(0)===1.
+console.log(dcos(0),dsin(0));
+console.log("*******************");
+//juste reprise des 2 fonctions derivée et n-ieme derivée.(EN APPROX.)
+//surtout pour la 2ieme qui cumule des erreurs..
+//et les valeurs de test dcos dsin fonctions in 0.()////
+//en typage maintenant: pour les 2 fonctions et aussi dcos,dsin tests.
+function daT(f:(number)=>number,h:number):(number)=>number{
+    return function(x:number):number{
+	return (f(x+h)-f(x-h))/(2*h);};}
+function da_nT(f:(number)=>number,h:number,n:number):(number)=>number{
+    if(n===1) return daT(f,h);
+    else return da_nT(daT(f,h),h,n-1);}
+let f1_t:(number)=>number=(x:number)=>Math.cos(x);
+let f2_t:(number)=>number=(x:number)=>Math.sin(x);
+let dcos_t:(number)=>number=daT(f1_t,0.0001);
+let dsin_t:(number)=>number=daT(f2_t,0.0001);
+console.log(dcos_t(0),dsin_t(0));
+type fun=(number)=>number;
+const dT:(fun,number)=>fun=(f,h)=>((x)=>((f(x+h)-f(x-h))/(2*h)));
+console.log(dT(f1_t,0.0001)(0));
+console.log(dT(f2_t,0.0001)(0));
+type number2=number;
+const dTn:(fun,number,number2)=>fun=(f,h,n)=>{
+    return (n===1 && dT(f,h)) || dTn(dT(f,h),h,n-1);};
+console.log("*******");
+//curryfied of dA_t.
+//l'ancienne version(nn typée)
+const dC=(f)=>(h)=>((x)=>((f(x+h)-f(x-h))/(2*h)));
+console.log(dC(f1)(0.0001)(0),dC(f2)(0.0001)(0));
+const dC_e=(f)=>(h)=>(x)=>((f(x+h)-f(x-h))/(2*h));
+let Dcos=dC_e(f1)(0.0001);//derivée du cosinus.
+//generalisation de dC_e par anti-specialisation.
+//fin rentre dans une fonction donc si 2 au lieu de 3 le retour se forme
+//sur la 3ieme place qui est la fonction derivée (x)=>dA(f,h)(x).
+let Dsin=dC_e(f2)(0.0001);
+console.log(Dcos(0),Dsin(0));
+//typage de la forme curryfiée.
+console.log("****>>>>>>>>>>>>>>>>>>>:");//mode1
+type func=(number)=>number;
+type curry=(func)=>(number)=>func;
+const dc_t:curry=(f)=>(h)=>((x)=>(f(x+h)-f(x-h))/(2*h));
+let ff1:(number)=>number=f1_t;let ff2:(number)=>number=f2_t;
+const deriv_cos:(number)=>number=dc_t(ff1)(0.0001);
+const deriv_sin:(number)=>number=dc_t(ff2)(0.0001);
+console.log(deriv_cos(0),deriv_sin(0));
+//mode2
+//specialisation en x.
+const t_2:(func)=>(number)=>(number)=>number=(f)=>(h)=>(x)=>(f(x+h)-f(x-h))/(2*h);
+console.log(t_2(ff1)(0.0001)(0),t_2(ff2)(0.0001)(0));
+const dcos2=t_2(ff1)(0.0001);const dsin2=t_2(ff2)(0.0001);
+console.log(dcos2(0),dsin2(0));
+console.log("**************************FIN EXO1.///");
+//specilisation typée en h et f:
+const d_h:(func)=>func=(f)=>dc_t(f)(0.1);
+const d_f:(number)=>func=(h)=>dc_t(Math.cos)(h);
+console.log(d_f(0.0001)(0));//dcos2(0)
+//pour d_h:>>
+//prend f et retourne la derivée function
+let derivee_sin=d_h(Math.sin);
+console.log(derivee_sin(0));//moins precis car h=0.1 pour specilisation
+//via nouvelle fonction d_h.

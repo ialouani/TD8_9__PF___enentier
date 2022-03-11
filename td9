@@ -1,0 +1,154 @@
+exo1: tic-tac-toe ignore car deja fait sur td8 en se basant sur (ss-typage) tooo(s,j) avec l'arbre en profondeur donne le tour de j puis lensemble des potentiels mises en tableau explicatif(.child.head.child.head.node possiblite 1 tirage probabilite1 de la mise de j sur s) par principe du duo donner en cet indice & s prochains deduits de chacuna pres celle-ci.//
+rq:>> notre-modele sinon pas d'exo encore.
+rq:>> pas de typage reprise td9 depuis td8.
+rq:>> pas de reprise now car deja fait et developpe en 3 methodes soit lensembles des choix(faible) soit le modele de chaque choix donnera (moyen car poursuite horizentale tt seule) soit principe du duo(seance d'aujourdhui.
+--------------------------
+exo2:
+rq:>> l'idee d'avoir en .child.head.child.head.node le ss-fils soit le FILS du 1er fils tt a gauche de j dans tooo(s,j) ou to(s,j) ou too(s,j) (modele3,1,2 respectivement) se voit s'appliquer ici dans une structure parresseuse donc on a prefere ne pas le faire car cette technique est mieux guidee dans cet exo-ci.//)
+------------*****************************
+un noeud a partir duquelle on definit un arbre (tel que ce noeud en .child est de meme type au lieu d'etre une valeur simple par exemple(comme .. . node) est definit ~de la meme facon:
+contient 2 champs=>
+1->val contenant la valeur du noeud.
+2->children champ ('s!!!) qui contient soit le tableau des fils du noeud soit le meme tableau congele dans une fonction.
+on parle de tableau pas de liste pour simplifier;ainsi tree.child est un tableau ou chaque element est le ss-arbre tree.child[0] represente le 1er ss-arbre soit le 1er fils de meme type que tree ou bien le meme tableau congele dans une fonction.
+=>difference ici cest que les enfants d'un noeud (les fils) puissent etre congeles. 
+=>on construit ainsi les 2 fonctions suivantes:
+1->node(_val,_children) qui permet de construire un noeud simple.
+2->isFrozen(node) qui permet de determiner si un noeud a ses enfants congeles ou non.
+node(_val,_children) retourne {node:_val,children:_children}
+isFrozen(node) retourne typeof node.children==='function'.
+//le tree.child ici devient un tableau au lieu d'une liste classique.
+le type tjrs en mode string '' et typeof () ou ss...
+maintenant si tree=node(5,[]) cela signifie larbre de racine 5 avec ss aucun fils si tree.child!==[] alors existe fils dont chacun est de type <node(,)> et contenant ses SS-FILS en .. .child[??].child[??'].val pour avoir la valeur du NOEUD du ??' ième fils du ?? ième fils de tree.
+=>construction d'une structure qui se deplie a la demande.
+QST(1):>>
+1-affichage lorsqu'on regarde les valeurs dedans fT?
+les valeurs dedans fT sont tt simplement la valeur du noeud de reference qui est fT.val celui la saffiche correctement et la 2ieme valeur fT.child qui est congelee donc affichage de [Function] tt simplement comme ordinairement quand on veut afficher une valeur congelee ca affiche la fonction et : son nom mais cela nest pas possible dans ce contexte car la fonction anonyme donc rien.
+rq: fT compte comme valeurs de stockage que val et child ainsi child est congelee sans au plus le mode trampoline on peut rien lire...
+=>deuxieme partie: deplier l'arbre:
+methode1: trampoline sur fT.child
+methode2: directement via fT.child() pour avoir la liste des enfants de type <node(,)>.
+QST(2):>>
+nT qui prend un noeud en parametre et si les enfants de ce noeud sont congeles decongele uniquement ce noeud car il sepeut que ce node en .child() se decongele mais en indice0 on aura node(??,()=>[node(??'),[]]); par exemple donc on decongele les fils pas celui la par exemple qui est un ss-fils du 1er fils de node relie a personne.
+const nT=(n)=>(iF(n))?node(n.val,n.child()):n;
+nT cest nodeThaw qui decongele en nouvelle instance()()() le node dont le tableau des fils est congele.
+QST(3):>>
+1er chose a faire=>faire la meme fonction nT en version2(nT2) avec effets de bord de telle facon a ce que nT(n) comme cela modifie sans retour voulu cad. dedans implementation return => bien car pas de console.log() comme AVANT.///
+Thaw_tree permet de decongeler un arbre cad. tous les fils que ce soit des enfants direct ou bien des ss-enfants il seront decongeles.
+prend un arbre de profondeur depth.(effets de bord)
+si depth===0 return ;
+sinon prodondeur==depth===$2>=1 donc au moins un .child a decongeler au cas ou.
+if(iF(root)) nT2(root);
+//on a decongeler le fils qui peut etre congele qui represente
+//lensemble des fils de la racine root.
+//maintenant on doit decongeler tous les sous-fils RESTANTS.
+//on recupere la liste des fils dabord qui contient implicitement les 
+//ss-fils qui est root.child
+//puis chaque element de root.child qui est de type <node(,)>
+//doit etre decongele si possible 
+//chaque element est un ss-arbre de profondeur depth-1
+//donc appliquer Thaw_tree sur root.child[??] en $2==depth-1.
+pour cela on fait un mapping ~forEach methode des tableaux.
+root.child.map((e)=>Thaw_tree(e,depth-1);
+voilà.
+reprise rapide:
+decongeler un arbre cest ne plus avoir de partie enfants congelee cad. en prenant la profondeur(le nombre de ss-niveaux de l'arbre..())/// on decongele d'abord lensemble des fils si iF(tree) on fera le de-gel defini par nT2(tree) avec comme argument tree===root&&root===$1 et depth qui est en $2 puis faire la meme chose pour tous les ss-fils cad. pour tous les ss-arbres qui sont les fils donc decongeler les fils suivant le meme processus par un parcours de tree.child via:
+tree.child.map((e)=>Thaw_tree(e,depth-1)) pour decongeler tous les ss-arbres de profondeur depth-1 pour avoir au final un arbre avec tous ses fils et ss-fils et ss-..-ss-fils jusqu'à les valeurs des feuilles de l'arbre en de-gel.
+depth=0=>return ;
+cette fonction est donnee:elle fut apres commentee.
+=>utilisons le mecanisme de controle de levaluation par frooze en structures parresseuses afin de construire des arbres qui peuvent se deplier a la demande.
+=>considerons l'arbre infi des entiers de cette maniere construit:
+-racine de valeur 1.
+-chaque noeud de valeur v a deux fils de valeurs 2*v et 2*v+1.
+=>debut de la question3:>>>>
+makeTree abrege de makeFiniteIntegerTree qui prend une valeur val a la racine et une profondeur depth et construit l'arbre des entiers avec racine val jusqu'à la profondeur depth.
+si depth===0 on retourne l'arbre avec racine comme unique noeud soit:
+ node(val,[])
+sinon:
+depth!==0 donc on cree l'arbre de racine val et de child === [f(2*v,depth-1), f(2*v+1,depth-1)].
+makeTree=(v,depth)=>
+(depth===0)?node(v,[]):node(v,[makeTree(2*val,depth-1),makeTree(2*val+1,depth-1)]);
+voila cest la fonction qui construit le meme arbre avec les specifications deja données sur ce dernier.//
+QST(4):>>
+makeTree2 en renommant les appels recursifs i.e. en affichant apres passage que celui-la correspond a larbre de racine val en $1 ainsi de suite...
+donc a chaque passage cad. au tt debut de la fonction avant meme les conditions ecrire:
+ console.log(`tree de racine ${val} et de profondeur ${depth}`)
+puis celle-ci congele la liste des fils lorsqu'ils sont renvoyes cad. part le premier if qui si juste retourne node(val,[]) qui doit etre en .child===()=>[] car a la fin la liste des fils d'une feuille pas la peine de congeler cette liste car triviale donc comme dans la ligne 2 avant< puis sinon le retour fonctionnel de fond doit etre congele cad. si depth!==0 il faut retourner l'arbre de racine val et de profondeur depth comme dans laffichage primaire et de .child :
+()=>[makeTree2(2*val,depth-1),makeTree2(2*val+1,depth-1)] qui dans les elements se retrouvent la liste contenant les sous-arbres qui sont les elements de root.child par RETOUR de meme type donc meme retour avec node de valeur val puis tjrs la meme fonction appliquee sur les 2 valeurs deduites pour le ss-arbre de gauche de profondeur depth-1 et de droite DE meme selon notre construction.
+=>renommage des appels recursifs faits.
+=>congelation des listes de fils renvoyes.
+test:
+la tester sur une valeur puis decongeler lensemble de l'arbre y resultant.
+=>affiche les etapes comme voulu et apres le Thaw_tree(th0==makeTree(1,2),2) permet apres de considerer th0 sans valeurs congeles ainsi la valeur de th0.child[0].child[1].val retourne bel et bien 5.
+QST(5):>>
+a quoi sert le parametre depth?
+si on a val en $1 et depth en $2 ca permet de construire un arbre fini delemite par la profondeur depth mais si on veut un arbre infini la structure parresseuse simpose de FORCE()()() :>>
+un arbre infini n'a pas de profondeur determinee donc si depth on le supprime de la liste des parametre d'entree de makeTree2 il faut s'assurer que tout va se passer bien..
+la cdt.1 disparait.
+le retour va se reduire en :
+return node(val,()=>[mT(2*val),mT(2*val+1)]) qui parait correct car ca retourne l'arbre de valeur val et de liste d'enfants le 1er fils la meme chose en 2*val et le 2ieme fils la meme chose en 2*val+1 exprimant par ceci que la valeur est congelee pas de probleme au niveau cdt.1 suppression conditionnee par leffacement de $2(depth) ok et la liste des ss-fils sera une liste de sous-arbres car meme type donc meme retour pour linkage depuis le somment present vers les 2 valeurs 2*val et 2*val+1 avec val===present__.val donc tout a fait correct.
+=>supprimer le depth en mode renvoie des fils congeles ne pose pas de probleme absolument.
+resume:
+supprimer le depth=>version d'arbre infinie mT(1) sous modele donné.
+=>recuperer une partie avec une profondeur depth
+=>decongeler jusqu'a la profondeur depth via:
+ Thaw_tree(mT(1),depth)
+puis on retrouve avec la meme chose que sur le schema en mode retour parametre donc un arbre infini peut se limiter par le degel en $2===profondeur la suite entt est un arbre infini car cette derniere est gelée.
+QST(6):>>
+les constructions precedentes sont academiques. Mettons les en application pour construire l'arbre des parties de notre jeu de morpion.
+->makeGameTree(s,j) a faire fonction renvoyant par retour (recursif mode car TT EN fonctionnel) l'arbre congele du jeu de morpion a partir de cet etat. 
+=>necessite sNexts qui necessite sESlots.
+1->emptys(s,0) retourne les indices de cases vides.
+2->copie(t) effectue une copie independante du type mutable t en astuce de retour fonctionnel recursivite tjrs.
+3->nexts(s,j) retourne le tableau des etats suivants probables a partir d'un etat et de la mise du joueur: j./////
+makeGameTree(s,j) et retourne l'arbre congele du jeu de morpion ; cet arbre va demarrer de s puis avoir comme fils l'ensemble des probas ainsi de suite...
+l'arbre congele aura comme racine s puis en child le tableau des nodes 
+supposons nommé cet arbre game
+game.val=s;
+game.child sera un tableau 
+game(val,child) 
+.. ..=>>>
+en .child cest congele on aura:
+()=>le tableau ou chaque element sera node(element__,makeGameTree(element__,jj))
+le retour est un arbre de racine s les fils sont eux aussi chacun un arbre de racine le prochain etat probable et de child => meme chose depuis l'originaire qui est node(val,child) au suivant qui sera node(nexts(val,jj)[??],()=>makeGameTree(..,jj)).
+=>il faut que snexts prend en compte cela.
+pour eviter tous ces problemes il faut que ..
+=>****FORMALISATION:
+le jeu de morpion en arbre infini est un arbre de racine s et de fils rassembles dans le child dont chaque element est de meme type soit arbre de racine etat probable suivant ()/// de la meme maniere linkage --fils suivants.
+mGT(s,j) demarre par la recuperation du tableau des suivants via: let next=nexts(s,j) puis le retour qui va etre node(s,()=>next2) avec next2 le tableau dont chaque element est de meme type donc :
+next2=next.map((e)=>mGT(e,switche(j))) puis on fait le retour :
+            return node(s,()=>next2) 
+avec next2 tableau des nodes ou chaque node exprimant le prochain etat depuis un etat de reference qui est s.val de la meme maniere mGT(e,switche(j)) depuis le j en $2 et le e des elements nexts(s,j)==next.
+la chaine obtenue est la suivante:
+s 
+puis le tableau chaque portion est: UN SOUS-ARBRE soit mGT(e,switche(j)) parcourant les e de next2===retour__.child.
+voilà.
+resume:
+let TREE=(s,j)=>{
+let next=nexts(s,j);
+let next2=next.map((e)=>TREE(e,switche(j)));
+return node(s,()=>next2);}
+=>si on veut l'arbre en entier:>>>>>>>
+on recupere l'infini via let tree=TREE(s,j)
+puis on compte le nombre de cases vides === emptys(s).length
+apres on de-gel suivant: Thaw_tree(tree,emptys(s).length)
+apres on teste en prenant tree.child en indice pour le 1er fils puis meme chose en .child[n] pour le n-ième sous-fils derivation fils tt a gauche (1er fils de tree ainsi de suite)
+RESUME+CONCLUSION:
+arbre infini en structure parresseuse 
+&&
+limitation par de-gel suivant une profondeur PUIS tests divers.//
+QST(7):>>
+pRG(tree) prend un arbre des parties (s,j puis toutes les chances possibles soit les parties par parcours unitaire feuille bcp..///()) et le decongele afin de decouvrir pas a pas les fils et terminer si un fils est un etat GAGNANT.(=>eH1/V1/D1() juste)
+meme chose deja~faite+voir debut cours8.
+FIN DU TD9.//
+FIN.///////
+
+
+
+
+
+ 
+
+
+
+

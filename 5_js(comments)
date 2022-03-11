@@ -1,0 +1,78 @@
+//les technqiues de programmation dirigée par les fonctions
+//presentent 2 styles:
+//la fonction commande 
+//>en premier; cest une fonction qui lance
+//un processus d'ecoute events puis apply suivant actions 
+//illustration mise a jour de view object page web
+//=>event-driven car cest les evenements qui stoppent poursuivent
+//lapplication post-lecture OU non apres test fonction relatif a l'event
+//dirigée par les fonctions en style event-driven modele fonctionnel tjrs
+//>en deuxieme; une fonction commande
+//le debut et le balancement d'un etat a un autre
+//dans une liste de lignes via interpretation en BASIC
+//donc ce sont les données ici un peu speciales qui decident
+//du poursuit en choix divers ainsi de suite
+//=>data-driven style respectant le modele fonctionnel.
+//en resume: la prog. dirigée par les fonctions qui en terme
+//est un peu farfelue mais SIGNIFIANT dirigée par des actions en style
+//fonctionnel bien sur peut se presenter suivant le mode event-driven
+//qui se refere aux evenements et actions(evenementielle)
+//ou bien LE mode data-driven qui donnent aux données le contrôle 
+//cad. via une fonction on debute d'une donnée qui conduit a une autre
+//selon les sous-données dans avoir des event comme le modele classiquement 
+//parler des if,else.
+//fact n en data-driven
+//etat initial
+//factoriel de 5.(120)
+//l'etat en cours est defini par le numero et env qui contient state..
+//dans le premier la fonction mere donne aux evenements la loi
+//i.e. la prog. en consiste a ceux que les evenements veulent
+//dans le deuxieme la fonction mere donne aux données la loi
+//cest a partir de la donnée qu'on peut savoir où aller ou bien arreter
+//et cest ces derniers qui effectuent au fur et a mesure ce qu'on veut
+//=>data-driven.
+//modele de codage des lignes => interpretation depuis le basic
+//qui presente l'aspect goto (balancement entre les données)
+//si if nommé usuellement jumpIf.///
+//si iS il faut pouvoir savoir les actions a faire introduits dans des données.
+//commencons par definir ces actions <=> expressions dans l'instruction.
+//tjrs des données objets => definition des actions fonctions en objet
+//via encapsulation interne.
+//let i=1 au debut et s=1 aussi.(i se voit apres +=1 et s*=i)
+//technique memorisée: lister les actions
+/*const actions={
+    const  Goto=(line)=>(state)=>{num: line.num, env: state.env};
+//goto depuis une ligne et un etat se balance au numero avec env===state.env
+
+    const Let=(line)=>(state)=>{let obj1={num: line.num+10};
+				obj1.env=state.env;
+				obj1.env.(line.instr.id)=line.instr.expr.Int;
+				return obj1;}
+    const jumpif=(line)=>(state)=>{num: line.instr.expr.nul, env: state.env};
+    const end=(line)=>(state)=>{num: line.num+10, env: state.env};}*/
+//let depuis une ligne se balance vers un autre etat defini par .num+10
+//et un env qui est le meme avant + la nouvelle variable
+//où elle se trouve 
+//en données entree 
+//state est l'etat qui contient env courant
+//et line est ce qu'on fait la fonction constructrice de lexpression
+//line contient instr qui contient id => cest line.instr.id
+//qui vaut line.instr.expr.int
+//dans jumpif la ligne a sauter est dans line.instr.expr.num
+//le state cest le numero de la ligne + env meme type que DE valeur retour des
+//4.
+//on doit a partir d'une fonction balancer entre ces données de mise en courant
+//fini par retour EN RETOUR fonction MERE.((()))
+//i=1 puis s=s*i a chaque fois que i++ jusqua n.
+
+//il faudrait traduire la version basic par un array de lignes
+//ou chaque ""ligne"" contient instr en kind et id 
+//et un champ expr contenant num,kind,op,lhs,rhs.
+
+
+
+
+ 
+
+
+

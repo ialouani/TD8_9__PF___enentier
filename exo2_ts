@@ -1,0 +1,146 @@
+type func=(number)=>number;
+type tp2=(number)=>func;
+//fonction curryfiée est de type (func)=>(number)=>func
+//donc ~ (func)=>tp2 avec type tp2=(number)=>func
+//le type de celle-ci en quoi CONTRAT sera (func):tp2
+interface tp{
+    (func):tp2;}
+const dct:tp=(f)=>(h)=>((x)=>((f(x+h)-f(x-h))/(2*h)));
+const dct2:tp=(f)=>(h)=>(x)=>(f(x+h)-f(x-h))/(2*h);
+console.log(dct(Math.sin)(0.0000001)(0));
+//via recuperation de la derivee
+const dsint:func=(x)=>dct(Math.sin)(0.0000001)(x);
+console.log(dsint(0));//specialisation en x si curryfied matched x also
+//in her work.
+let dsint_2:(number)=>number=dct2(Math.sin)(0.1);
+console.log(dsint_2(0));
+console.log("***********************************EXO2:>>");
+type pp<T,U>={car: T; cdr: U;};
+function cons<T,U>(_car: T, _cdr: U):pp<T,U>{
+    return {car:_car,cdr:_cdr};}
+function car<T,U>(pl: pp<T,U>):T{
+    return pl.car;}
+function cdr<T,U>(pl: pp<T,U>):U{
+    return pl.cdr;}
+console.log("tests de validite:*******************<");
+let pp1:pp<number,object>=cons<number,object>(10,{});
+let car_1=car<number,object>(pp1);
+let cdr_1=cdr(pp1);//pp1 motifs types connus leve lobligation de retention
+//values types T,U de l'en-tête fonctionnel.
+let pp2:pp<number,object>=cons(20,{});
+//si on veut la meme chose pour la declaration value type pp
+//on doit en oblige preciser le type si on type cette valeur
+//sinon directement=cons(10,{}) meme chose car $1,$2 types connus
+//a lentree de cons.
+console.log(pp1,car_1,cdr_1,pp2);
+console.log("fin tests et retour au debut QST2:>>>>");
+type Tp=number | string;
+let a1:Tp=1;let a2:Tp="1";
+console.log(a1,a2);
+console.log("************");//undefined mieux au debut..///
+type List<T>=undefined | {car: T, cdr: List<T>};
+/*function ine<T>(li: List<T>):boolean{
+    return li!==undefined;}
+function ie<T>(li:List<T>):boolean{
+    return !ine(li);}*/
+//on connait pas le type de l 2 possiblites
+//=>retour type===predicat sur les types
+//qui sera pour ine le predicat qui fait penser a ce que
+//l n'est pas une paire donc de valeur undefined car type undefined
+//car type List<T>.. donc si l!==undefined l en type undefined 
+//de valeur undefined comparee avec undefined de type n'importe quoi
+//mais undefined car comme la valeur est inconnu le type sera 
+//de preference undefined apres test avec let t:boolean=undefined
+//apres typeof(t)===undefined car directement vu que t!==true,false
+//donc indefini en premier abord pour les 2 donc type devenu undefined
+//sinon type!==undefined et boolean donc impliquerait que la valeur de 
+//ce booleen sera connu car le typebooleen donc valeur true,false en GROS
+//ce qui est faux => type undefined devenir just-in_time. retour sur 
+//l!==undefined avec typeof(l)===undefined donc(rappel car l pas paire
+//et de type List<T>) DONC le test comparera une valeur undefined
+//car type undefined est la valeur concretisee direCT undefined ce qui
+//donne false pour une liste vide.
+function ine<T>(l:List<T>): l is pp<T,List<T>>{
+    return l!==undefined;}
+//le cas des paires donnera l comme valeur non undefined sinon !==paire
+//donc l!==undefined juste => retour vrai si lnn vide.
+function ie<T>(l: List<T>): l is undefined{
+    return !ine(l);}
+//si l undefined donc de valeur undefined comparaison !juste=>retour juste
+//et sinon l en entree de ine est de type pp<T,List<T>> donc forcement
+//!==valeur_UNDEFINED=>juste=>retour faux == ie(l).
+function thatTakesAList<T>(l: List<T>): any{
+//typeof(l) is List<T> and therefore imprecise
+//trancher en utilisant ie,ine
+    if(ie(l)){//donc le type est au passage undefined 
+	return {};}//pas type du retour List<T>
+//sinon on ne doit pas retourner {} qui est pas de type undefined
+//directement par javascript.///
+    else return l;//le type===pp<T,List<T>>
+}
+let l1:List<number>={car: 30, cdr: {car: 50, cdr: undefined}};
+console.log(thatTakesAList(l1),thatTakesAList(l1.cdr.cdr));
+console.log("*******QST2:**************");
+function head<T>(l: List<T>):T{
+    if(ie(l)) {let o:T=undefined; return o;}
+    return l.car;}
+function tail<T>(l: List<T>):List<T>{
+    if(ie(l)) return undefined;
+    return l.cdr;}
+console.log(head(l1),head(l1.cdr.cdr));
+console.log(tail(l1),tail(l1.cdr));
+function head2<T>(l: List<T>): undefined|T{
+    if(ie(l)) return undefined;
+    else return l.car;}
+console.log(head2(l1),head2(l1.cdr.cdr));
+function head3<T>(l: List<T>): any{
+    if(ie(l)) return undefined;
+    else return l.car;}
+function tail2<T>(l: List<T>): undefined|List<T>{
+    if(ie(l)) return undefined;
+    else return l.cdr;}
+function tail3<T>(l: List<T>): any{
+    if(ie(l)) return undefined;
+    else return l.cdr;}
+console.log(head3(l1),head3(l1.cdr.cdr));
+console.log(tail2(l1),tail2(l1.cdr));
+console.log(tail3(l1),tail3(l1.cdr),tail3(undefined));
+console.log("****************QST4:>>*****************");
+//fonction listMap
+//rappels:..
+const consnt=(v1,v2)=>{ return {"car": v1, "cdr": v2};};
+function listmap(l,f){
+    if(l===undefined) return undefined;
+    else return consnt(f(l["car"]),listmap(l["cdr"],f));}
+let ll1={"car": 1, "cdr":{"car": 2, "cdr": {"car": 3, "cdr": undefined}}};
+console.log(listmap(ll1,(x)=>x*2));
+//faire un return pour flechage retour objet et des strings pour les keys
+//ca permet d'eviter les .key.//(acces valeurs keys connues si typage..)////////
+function listmapT<T>(l: List<T>,f: (T)=>T):List<T>{
+    if(ie(l)) return l;
+    return cons<T,List<T>>(f(head(l)),listmapT(tail(l),f));}
+console.log(l1);
+const func1=(x:number)=>x+1;
+console.log(listmapT(l1,func1));
+console.log("*************QST4:>>(la derniere)*************************");
+//lF_r ::
+function lF_r(l,f,acc){
+    if(l===undefined) return acc;
+    else return f(lF_r(l["cdr"],f,acc),l["car"]);}
+console.log(lF_r(ll1,(u,v)=>u+v,0));
+console.log(lF_r(ll1,(u,v)=>u*v,1));
+//en typage:::
+function lF_rT<T>(l: List<T>, f:(number,T)=>T, acc: T):T{
+    if(ie(l)) return acc;
+    else return f(lF_rT(tail(l),f,acc),head(l));}
+console.log(lF_rT(l1,(u:number,v:number)=>u+v,0));
+console.log(lF_rT(l1,(u,v)=>u*v,1));
+function rslt<T,U>(l:List<T>, f:(U,T)=>U, acc:U):U{
+    if(ie(l)) return acc;
+    else return f(rslt(tail(l),f,acc),head(l));}
+console.log(rslt<number,number[]>(l1,(u,v)=>u.concat([v]),[]));
+console.log("fin exo2.//");
+function lm2<T,U>(l: List<T>, f:(T)=>U):List<U>{
+    if(ie(l)) return undefined;
+    return cons<U,List<U>>(f(head(l)),lm2(tail(l),f));}
+console.log(lm2<number,number[]>(l1,(u)=>[u]));

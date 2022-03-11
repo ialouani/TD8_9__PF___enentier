@@ -1,0 +1,15 @@
+//coll soit number[] soit string (types!!!)
+//=>fonction possede un parametre de type qui est T
+//tel que coll est un tableau de char((s)) ~ string => ArrayLike<T>
+//soit tableau de nombres dont ArrayLike<T> avec T ici ==number
+//=>T soit string soit number (modele TS)
+function nbr(coll, f) {
+    var res = 0;
+    for (var i = 0; i < coll.length; i++) {
+        if (f(coll[i]))
+            res += 1;
+    }
+    return res;
+}
+console.log(nbr("erfderfedr", function (e) { return e === "e"; }));
+console.log(nbr([1, 2, 1], function (p) { return p === 1; }));

@@ -1,0 +1,19 @@
+//comme la fonction zip.
+//fonction curryfiée comme titre de developpement ciblé:>>>
+var f = function (a) { return function (b) { return [a, b]; }; };
+console.log(f(1)(2));
+var zip = function (a) { return function (b) { return [a, b]; }; };
+console.log(zip(2)(3233));
+var _ = require("ramda");
+console.log(_.zip([1, "e"])([2, "rt"]));
+function fr(a) {
+    //fr(a) doit retourner la fonction (b)=>[a,b]
+    var g = function (b) { return [a, b]; };
+    return g;
+}
+console.log(fr(23)(47));
+var h = function (a) { var g = function (b) { return [a, b]; }; return g; };
+console.log(h(2)(43));
+console.log(Object.getOwnPropertyNames(_.zip));
+var obj = _.zip;
+console.log(obj['length']); //card(pseudo$#)./

@@ -1,0 +1,233 @@
+function node(_val,_children){
+    return {val: _val, child: _children};}
+function iF(node){
+    return typeof(node.child)==='function';}
+//on construit 5 relie a 6 8 6 a 7 et 8 a 9,10.
+let n1=node(6,[node(7,[])]);
+let n2=node(8,[node(9,[]),node(10,[])]);
+let t2=[n1,n2];
+let t1=node(5,t2);//t2 tableau des 2 fils
+console.log(t1.child);//6 et 8 fils(enfants.//)///
+let fils=t1.child;//tableau des 2 fils marques par 6et8.
+console.log(fils[0].val);//===6
+console.log(fils[1].val);//===8
+let node1=fils[0];//fils=t1.child donc tableau de fils de t1.
+//en 0 on receuille le premier marque par 6.
+console.log(node1.child[0].val);//===7
+console.log(fils[1].child[0].val);//===9
+console.log(fils[1].child[1].val);//===10
+console.log(iF(t1));
+let fT=node("root",()=>[node("1st son",[]),node("2nd son",[])]);
+console.log(iF(fT));//true car fT.child est de type fonction. 
+console.log("*************************");
+//construisons un arbre congele pour ses enfants en retour fonctionnel
+//sans parametre (bien sur).
+let tt=node('j',()=>[node("proba1",[]),node("proba2",[])]);
+console.log(iF(tt));
+console.log(tt.val);
+console.log(tt.child);
+let children=tt.child();
+console.log(children[0].val);
+console.log(children[1].val);
+console.log(children[0].child);//rien aucun ss fils depuis children[0]
+console.log(children[1].child);//meme chose depuis children[1]
+console.log(children.length);//deux assurer le parcours limite par len==2.
+let trampo=(e)=>e.child();
+let childs=trampo(tt);
+console.log(childs[0].val,childs[1].val);
+//voila.//
+console.log("***********************");
+function nT(node){
+    if(iF(node)) {node.child=node.child();return node;}
+    else return node;}//si !iF(node)<=>les enfants ne sont pas congeles
+//<=>node.child est accessible sans pouvoir appliquer fonction congelation.}
+let node11=nT(tt);
+console.log(node11.child[0].val);
+console.log(node11.child[1].val);
+console.log("**************************");
+function nT2(n){
+    if(iF(n)) {n.child=n.child();return;}
+    else return;}
+nT2(tt);
+console.log(tt.child[0].val,tt.child[1].val);
+console.log("****************************");
+function Thaw_tree(root,depth){
+    if(depth===0) return;
+    else{
+	if(iF(root)) nT2(root);
+	root.child.map((e)=>Thaw_tree(e,depth-1));}}
+let tt0=[node(10,()=>[node(20,[])]),node(11,()=>[node(23,[])])];
+let t0=node(5,()=>tt0)
+Thaw_tree(t0,2);
+console.log(t0.child[0].val);
+console.log(t0.child[0].child[0].val);
+console.log(t0.child[1].val);
+console.log(t0.child[1].child[0].val);
+console.log("******************************")
+function makeTree(val,depth){
+    if(depth===0) return node(val,[]);
+    else return node(val,[makeTree(2*val,depth-1),makeTree(2*val+1,depth-1)]);}
+let tg=makeTree(1,2);
+let tg1=tg.child;//les fils en premier.
+let tg10=tg1[0].child;
+let tg11=tg1[1].child;
+console.log(tg10[0].val,tg10[1].val);
+console.log(tg11[0].val,tg11[1].val);
+console.log(tg10[0].child,tg11[1].child);
+console.log("*************************");
+function makeTree2(val,depth){
+    console.log(`tree de racine ${val} et de profondeur ${depth}`);
+    if(depth===0) return node(val,[]);
+    else return node(val,()=>[makeTree2(2*val,depth-1),makeTree2(2*val+1,depth-1)]);}
+let th0=makeTree2(1,2);
+Thaw_tree(th0,2);
+console.log(th0.child[0].child[1].val);
+console.log("********************************");
+function mT(val){//arbre infinie suivant notre modele..///
+    console.log(`tree de racine ${val} en sommet..`);
+    return node(val,()=>[mT(2*val),mT(2*val+1)]);}
+let po=mT(1);//l'arbre infinie de la page2.
+po.child=po.child();
+console.log(po.child[0].val);
+console.log(po.child[1].val);
+console.log(po.child[0].child,po.child[1].child);
+//Thaw_tree(po); erreur d'explosion de la pile d'appels recursifs 
+//si depth est laisse libre ..
+po=mT(1);
+Thaw_tree(po,5);//decongel les fils des niveaux 1-5 
+//ce qui a permis de savoir 2**5 valeur car chaque niveau
+//suivant notre precision ci-dessous est marque par 2**niveau../// 
+console.log(po.child[0].child[0].child[0].child[0].child[0].val);//===32
+//tt a gauche suivant une ligne inclinee affiche les puissances de 2 
+//pas a pas.///
+console.log(po.child[0].child[0].child[0].child[0].child[0].child);
+//[Function] et en ..[0] undefined..///
+//affichage de tous les poursuites des ss-arbres 
+//de (si apres po=mT(1) car ca ete modifie avec po.child=po.child();)
+//l'arbre 1 de racine cette derniere(en terme de valeur)
+//de sommet.. comme cest ecrit a 2*Un+1 5 fois depuis Un=1
+//donc 3 puis la 2ieme qui est 7 puis 3=>15 puis 4=>31 
+//puis 5=>63 qui est la derniere valeur donc forcement
+//a la fin (correspondance tt a droite bien sur)
+//affichage de tree de somment 63(racine du ss-arbre FEUILLE.//).///////
+console.log("******************************");
+function state0(){
+    let t=['','','','','','','','',''];
+    return t;}
+let state=state0();
+console.log(state);//depuis fonction pour appuyer le '' en mode
+//affectation ENTIERE..///()
+function emptys(s,n){
+    if(s.length===0) return [];
+    else{
+	if(s[0]==='') return [n].concat(emptys(s.slice(1),n+1));
+	else return emptys(s.slice(1),n+1);}}
+state[0]='x';state[2]='o';
+console.log(state,emptys(state,0));
+function copie(t){
+    if(t.length===0) return [];
+    else return [t[0]].concat(t.slice(1));}
+function nexts(s,j){
+    let ss=emptys(s,0);
+    return ss.map((e)=>{let sp=copie(s);sp[e]=j;return sp;});}
+console.log(nexts(state,'x'));//copie car type mutable.
+console.log("*******************");
+function switche(j){
+    if(j==='x') return 'o';
+    return 'x';}
+function mGT(s,j){
+    let next=nexts(s,j);
+    let next2=next.map((e)=>mGT(e,switche(j)));
+    //console.log(next2);
+    return node(s,()=>next2);}
+console.log(state);
+let tree=mGT(state,'x');
+tree.child=tree.child();
+let cs=tree.child;
+console.log(cs[0].val);
+console.log(cs[6].val);
+console.log(cs[0].child);
+cs[0].child=cs[0].child();
+console.log(cs[0].child[0].val);
+console.log(cs[0].child[1].val);
+console.log("**************************");
+console.log(state);
+let Tree=mGT(state,'x');
+Thaw_tree(Tree,3);
+console.log(Tree.child[0].child[0].child[0].val);
+//comme cela.
+//dans nexts(s,j) chaque element e est un etat donc en d'autres termes
+//si on considere le linkage de s avec le tableau des sous-arbres de meme
+//type ce dernier sera transforme en mGT(e,switche0(j))
+//puis retour de node(s,()=>next2) avec next2=nexts(s,j).map
+//((e)=>mGT(e,switche0(j))) ainsi le next2 sera le tableau des sous-arbres
+//definition via le contenu e en mode sous-arbre de racine ce contenu e 
+//et de suite..=>mGT(e,switche0(j)).
+console.log("********************************");
+//en rapide:>>
+function finalE(s,j){
+    let next1=nexts(s,j);
+    let next2=next1.map((e)=>finalE(e,switche(j)));
+    return node(s,()=>next2);}
+console.log(state);
+let TREE=finalE(state,'x');
+Thaw_tree(TREE,7);//pour avoir toutes les parties.
+console.log(TREE.child[0].child[0].child[0].child[0].child[0].child[0].child[0].val);
+console.log(TREE.child[6].child[5].child[0].child[0].child[0].child[0].child[0].val);
+console.log("************************");
+console.log("************************************");
+function eV1(s){
+    let e1=0;
+    let s1=s.reduce((e,F)=>{if(e1%3===0) {e1=e1+1;return e.concat([F]);} else {e1=e1+1;return e;}},[]);//tableau de la verticale 1 en elements.
+    e1=0; 
+    let s2=s.reduce((e,F)=>{if(e1%3===1) {e1=e1+1;return e.concat([F]);} else {e1=e1+1;return e;}},[]);//verticale2
+    e1=0;
+    let s3=s.reduce((e,F)=>{if(e1%3===2) {e1=e1+1;return e.concat([F]);} else {e1=e1+1;return e;}},[]);//verticale3
+    if(s1[0]===s1[1] && s1[0]===s1[2] && s1[0]!=='') return true;
+if(s2[0]===s2[1] && s2[0]===s2[2] && s2[0]!=='') return true;
+if(s3[0]===s3[1] && s3[0]===s3[2] && s3[0]!=='') return true;
+    return false;}
+function eH1(s){
+    let e1=0;
+    let s1=s.reduce((e,F)=>{if(e1<3) {e1=e1+1;return e.concat([F]);} else {e1=e1+1;return e;}},[]);//h1
+  e1=0;
+    let s2=s.reduce((e,F)=>{if(e1>=3 && e1<6) {e1=e1+1;return e.concat([F]);} else {e1=e1+1;return e;}},[]);//H2
+  e1=0;
+    let s3=s.reduce((e,F)=>{if(e1>=6 && e1<9) {e1=e1+1;return e.concat([F]);} else {e1=e1+1;return e;}},[]);//H 3.////
+if(s1[0]===s1[1] && s1[0]===s1[2] && s1[0]!=='') return true;
+if(s2[0]===s2[1] && s2[0]===s2[2] && s2[0]!=='') return true;
+if(s3[0]===s3[1] && s3[0]===s3[2] && s3[0]!=='') return true;
+    return false;}
+function eD1(s){
+    let s1=[s[0]].concat([s[4]]);
+    let diag1=s1.concat([s[8]]);
+    let s2=[s[2]].concat([s[4]]);
+    let diag2=s2.concat([s[6]]);
+    if(diag1[0]===diag1[1] && diag1[1]===diag1[2] && diag1[0]!=='') return true;
+ if(diag2[0]===diag2[1] && diag2[1]===diag2[2] && diag2[0]!=='') return true;
+    return false;}
+console.log(state);
+console.log(eV1(state),eH1(state),eD1(state));
+let state2=['x','','','','x','','','','x'];
+console.log(eV1(state2),eH1(state2),eD1(state2));
+/*function stateIsFinal(s){
+    return eH1(s) || eV1(s) || eD1(s);}
+console.log(stateIsFinal(state2));
+console.log("****************************");
+function Isfinal(child){
+//retourne true si l'un des elements en .val est gagnant
+    return child.reduce((e,F)=>(stateIsFinal(F.val))?true:e,false);}
+function isfinal(tree){
+    if(stateIsFinal(tree.val)) return true;
+    else return (iF(tree))?false:Isfinal(tree.child);}*/
+function pRG(tree,n){//tree est congele.(n=1 au debut)
+//la partie se joue
+//tree a .val defini mais .child est congele on le decongele.
+    let nbr=emptys(tree.val).length;
+    Thaw_tree(tree,nbr);
+    return tree;}
+let TRee=pRG(mGT(state,'x'));
+let STATE=TRee.child[0].child[0].child[0].child[0].child[0].child[0].child[0].val;
+console.log(STATE);
+console.log(eH1(STATE),eV1(STATE),eD1(STATE));
+console.log("fin TD9, plus de precision dans le debut du cours8.");

@@ -1,0 +1,70 @@
+var obj = { age: 123, name: "AZA" };
+console.log(obj);
+var Customer = /** @class */ (function () {
+    function Customer() {
+    }
+    Customer.prototype.serialize = function () {
+        return this.firstName;
+    };
+    return Customer;
+}());
+var obj2 = new Customer();
+obj2.firstName = "aza";
+console.log(obj2);
+console.log(obj2.serialize());
+//ce modele prototype peut generaliser le book en plusieurs types
+//de bouquins mais tjrs se referant a la meme chose cad.
+//ensemble de pages ayant un nom et une fonction qui ressort ce nom ou
+//un string specifique en general. 
+var book = /** @class */ (function () {
+    function book() {
+    }
+    book.prototype.f = function (a) { return a + this.name; };
+    return book;
+}()); //exemple de voila ..///
+var obj1 = new book();
+obj1.name = "aza";
+console.log(obj1.f); //[Function: (anonymous)].
+console.log(obj1.f("voila "));
+var livre = /** @class */ (function () {
+    function livre() {
+    }
+    livre.prototype.f = function () { return this.name + " a " + this.nbr; };
+    return livre;
+}());
+var obj3 = new livre();
+obj3.nbr = 12;
+obj3.name = "azz";
+console.log(obj3);
+console.log(obj3.f());
+var grand = /** @class */ (function () {
+    function grand() {
+    }
+    grand.prototype.age0 = function () { return this.age - 19; };
+    return grand;
+}());
+var obj5 = new grand();
+obj5.age = 23;
+console.log(obj5, obj5.age0());
+var number2 = /** @class */ (function () {
+    function number2(a) {
+        //a celle-ci pour instancier un objet manipulé desormais en this.
+        this.value = a;
+        this.value_2 = a * 2;
+    }
+    return number2;
+}());
+var nombre1 = new number2(12);
+console.log(nombre1);
+console.log("************************");
+var Product = /** @class */ (function () {
+    function Product() {
+    }
+    return Product;
+}());
+function pric(product) { return product.price; }
+var price = pric;
+var obj20 = new Product();
+obj20.price = 1232;
+console.log(price(obj20));
+console.log("************************");

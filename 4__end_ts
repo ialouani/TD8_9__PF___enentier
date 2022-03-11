@@ -1,0 +1,75 @@
+//creation de classe:
+//1-sans construct
+class book{
+    name:string;
+    price:number;//le this doit etre ''encapsule''
+    //donc au lieu de mettre nom de la methode f 
+//puis : ici le type donc lexpression
+//f:()=>this.name est incorrect il faut faire le type a la place
+//de ()=>this.name soit ()=>string. PUIS LA valeur 
+//pour implementer la methode soit en gros:>>>
+//f:()=>string=()=>this.name;
+    f:()=>string=()=>this.name;
+//on peut implementer une methode directement.
+    g(){return this.price;}
+}
+let book1=new book();
+book1.name="a";book1.price=124;
+console.log(book1.f());
+console.log(book1.g());
+//2-via construct
+class book2{
+//declaration des champs existants
+    name: string;
+    price: number;
+    constructor(a:string,b:number){
+	this.name=a;this.price=b;}}
+let book3=new book2("b",249);
+console.log(book3.name,book3.price);
+console.log("**************************");
+//interfaces de classes:>>
+interface livre{
+    name: string;
+//comme les classes pour les proprietes mais un peu moins en terme de cardinal.
+//les methodes ne sont pas implementées.
+    f(m:number):void;}
+//que la signature de la methode soit son nom optionnelle
+//et les arguments typés ici m de type number et le retour de type VOID.
+//deriver une classe:>>>>>
+class livre0 implements livre{
+    name: string;
+    price: number;
+    //comme la classe implementer f direct demarrage f(..){..;};
+    f(m:number):void{
+	this.price=m*2;
+	return;}}
+//car tt simplement quand on fait f(m:number):void il faut faire{}après
+//sinn si on voulait faire f=..
+//il faut ecrire f:le type (number)=>void affectation = (m: number)=>..
+//cad. f:(number)=>void=(m:number)=>{this.price=m*2;return;}///
+class livre00 implements livre{
+    name: string;
+    price: number;
+    f:(number)=>void=(m:number)=>{this.price=m*2;return;}}
+const bouquin11=new livre00();
+bouquin11.name="ere";bouquin11.f(3);
+console.log(bouquin11.price);
+const bouquin11_2=new livre0();
+bouquin11_2.name="ere";bouquin11_2.f(3);
+console.log(bouquin11_2.price);
+//interfaces de fonctions
+interface infos{
+    (p:produit):number;}
+class produit{
+    name: string;
+    price2: number;}
+function price2(p: produit){
+    return p.price2;}
+let price_produit:infos=(p:produit)=>price2(p);
+const p1=new produit();
+p1.price2=12333;
+console.log(price_produit(p1));
+//l'interface de fonction nommé infos devient un type
+//pour toutes les fonctions qui prennent un p objet instancié depuis la classe
+//produit nom GENERIQUE et retourne un number"";//
+console.log("************************");

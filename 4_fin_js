@@ -1,0 +1,62 @@
+function op_apply_int(lval, rval, f) {
+    return { kind: "val_int", val: f(lval.val, rval.val) };
+}
+function op_apply(lval, op, rval) {
+    switch (op.kind) {
+        case "op_equal": return { kind: "val_bool", val: lval.val === rval.val };
+        case "op_plus": return op_apply_int(lval, rval, function (u, v) { return u + v; });
+        case "op_mult": return op_apply_int(lval, rval, function (u, v) { return u * v; });
+    }
+}
+var add = /** @class */ (function () {
+    function add() {
+    }
+    return add;
+}());
+var multipl = /** @class */ (function () {
+    function multipl() {
+    }
+    return multipl;
+}());
+var equalto = /** @class */ (function () {
+    function equalto() {
+    }
+    return equalto;
+}());
+var nbr = /** @class */ (function () {
+    function nbr(l) {
+        this.val = l;
+    }
+    return nbr;
+}());
+var nbr1 = new nbr(12);
+var nbr2 = new nbr(8);
+//il faut que lval et rval soit de type Value donc directement 
+//construction depuis Value
+var n1 = /** @class */ (function () {
+    function n1() {
+    }
+    return n1;
+}());
+var n2 = /** @class */ (function () {
+    function n2() {
+    }
+    return n2;
+}());
+//manuellement via type=..~variable:TYPE=valeur_demandée..///
+var m1 = { kind: "number", val: 12 };
+var m2 = { kind: "number", val: 8 }; //pop=>les objets sont des classes
+//en mode objets prototypes => interface definit les types d'objets en POP.
+//const addition:Op={kind: "op_plus", genre:"adding"};
+//faux car là on cree pas des classes on considere une valeur d'un type
+//comme une structure en C donc on se limite aux champs existants 
+//en interface type objet UNIQUEMENT!!!
+var addition = { kind: "op_plus" };
+console.log(op_apply(m1, addition, m2));
+var multi = { kind: "op_mult" };
+var equalb = { kind: "op_equal" };
+var m3 = { kind: "number", val: 12 };
+console.log(op_apply(m1, multi, m3));
+console.log(op_apply(m1, equalb, m2));
+console.log(op_apply(m1, equalb, m3));
+//voilà.
